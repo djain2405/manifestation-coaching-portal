@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 import {
   DndContext,
@@ -20,6 +21,7 @@ import { CSS } from "@dnd-kit/utilities";
 import type { Item } from "@/lib/types";
 import { reorderItemsAction, deleteItemAction } from "@/app/admin/actions";
 import { WorksheetUpload } from "./WorksheetUpload";
+import { EditItemForm } from "./EditItemForm";
 import { isActivityItem } from "@/lib/items";
 
 type Props = {
@@ -34,6 +36,7 @@ function SortableRow({
   item: Item;
   collectionId: string;
 }) {
+  const [editing, setEditing] = useState(false);
   const { attributes, listeners, setNodeRef, transform, transition } =
     useSortable({ id: item.id! });
 
@@ -46,41 +49,59 @@ function SortableRow({
     <li
       ref={setNodeRef}
       style={style}
-      className="flex items-center gap-3 rounded-xl border border-border bg-white p-4"
+      className="rounded-xl border border-border bg-white p-4"
     >
-      <button
-        type="button"
-        className="cursor-grab px-2 text-muted active:cursor-grabbing"
-        {...attributes}
-        {...listeners}
-        aria-label="Drag to reorder"
-      >
-        ⋮⋮
-      </button>
-      <span className="text-xl" aria-hidden>
-        {item.emoji ?? (item.type === "activity" ? "📝" : "▶")}
-      </span>
-      <div className="min-w-0 flex-1">
-        <p className="font-medium text-foreground">{item.title}</p>
-        <p className="text-sm text-muted">
-          {item.type} · {item.slug}
-        </p>
-        {isActivityItem(item) && item.id ? (
-          <WorksheetUpload
-            itemId={item.id}
-            collectionId={collectionId}
-            currentPath={item.activity?.pdf}
-          />
-        ) : null}
-      </div>
-      <form action={deleteItemAction.bind(null, item.id!, collectionId)}>
+      <div className="flex items-center gap-3">
         <button
-          type="submit"
-          className="rounded-lg border border-border px-3 py-2 text-sm text-red-600"
+          type="button"
+          className="cursor-grab px-2 text-muted active:cursor-grabbing"
+          {...attributes}
+          {...listeners}
+          aria-label="Drag to reorder"
         >
-          Delete
+          ⋮⋮
         </button>
-      </form>
+        <span className="text-xl" aria-hidden>
+          {item.emoji ?? (item.type === "activity" ? "📝" : "▶")}
+        </span>
+        <div className="min-w-0 flex-1">
+          <p className="font-medium text-foreground">{item.title}</p>
+          <p className="text-sm text-muted">
+            {item.type} · {item.slug}
+          </p>
+        </div>
+        <div className="flex shrink-0 gap-2">
+          <button
+            type="button"
+            onClick={() => setEditing((v) => !v)}
+            className="rounded-lg border border-border px-3 py-2 text-sm"
+          >
+            {editing ? "Close" : "Edit"}
+          </button>
+          <form action={deleteItemAction.bind(null, item.id!, collectionId)}>
+            <button
+              type="submit"
+              className="rounded-lg border border-border px-3 py-2 text-sm text-red-600"
+            >
+              Delete
+            </button>
+          </form>
+        </div>
+      </div>
+      {isActivityItem(item) && item.id ? (
+        <WorksheetUpload
+          itemId={item.id}
+          collectionId={collectionId}
+          currentPath={item.activity?.pdf}
+        />
+      ) : null}
+      {editing ? (
+        <EditItemForm
+          item={item}
+          collectionId={collectionId}
+          onCancel={() => setEditing(false)}
+        />
+      ) : null}
     </li>
   );
 }

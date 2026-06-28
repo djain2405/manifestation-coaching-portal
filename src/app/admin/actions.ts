@@ -6,6 +6,7 @@ import { randomBytes } from "crypto";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { requireAdmin } from "@/lib/session";
 import { slugify, uniqueSlug } from "@/lib/slug";
+import { parseVideoUrl } from "@/lib/parse-video-url";
 import { createClient } from "@/lib/supabase/server";
 import type { SupabaseClient } from "@supabase/supabase-js";
 
@@ -237,32 +238,110 @@ export async function deleteItemAction(itemId: string, collectionId: string) {
   revalidatePath(`/admin/series/${collectionId}`);
 }
 
-export async function uploadWorksheetAction(
+export async function updateWatchItemAction(
   itemId: string,
   collectionId: string,
   formData: FormData,
 ) {
   await requireAdmin();
-  const file = formData.get("file") as File | null;
-  if (!file) throw new Error("No file");
+  const supabase = await createClient();
+
+  const title = String(formData.get("title") ?? "").trim();
+  const url = String(formData.get("url") ?? "").trim();
+  if (!title) throw new Error("Title is required");
+
+  const parsed = parseVideoUrl(url);
+  if (!parsed) throw new Error("Enter a valid YouTube or Loom URL");
+
+  const { error: itemError } = await supabase
+    .from("items")
+    .update({
+      title,
+      updated_at: new Date().toISOString(),
+    })
+    .eq("id", itemId);
+
+  if (itemError) throw new Error(itemError.message);
+
+  const { error: watchError } = await supabase
+    .from("watch_items")
+    .update({
+      embed_provider: parsed.provider,
+      embed_id: parsed.id,
+    })
+    .eq("item_id", itemId);
+
+  if (watchError) throw new Error(watchError.message);
+
+  revalidatePath(`/admin/series/${collectionId}`);
+}
+
+export async function updateActivityItemAction(
+  itemId: string,
+  collectionId: string,
+  formData: FormData,
+) {
+  await requireAdmin();
+  const supabase = await createClient();
+
+  const title = String(formData.get("title") ?? "").trim();
+  if (!title) throw new Error("Title is required");
+
+  const { error } = await supabase
+    .from("items")
+    .update({
+      title,
+      updated_at: new Date().toISOString(),
+    })
+    .eq("id", itemId);
+
+  if (error) throw new Error(error.message);
+
+  revalidatePath(`/admin/series/${collectionId}`);
+}
+
+export async function uploadWorksheetAction(
+  itemId: string,
+  collectionId: string,
+  formData: FormData,
+): Promise<string> {
+  await requireAdmin();
+  const file = formData.get("file");
+
+  if (!(file instanceof File) || file.size === 0) {
+    throw new Error("Choose a PDF file to upload");
+  }
+
+  if (file.type !== "application/pdf" && !file.name.toLowerCase().endsWith(".pdf")) {
+    throw new Error("Only PDF files are supported");
+  }
 
   const admin = createAdminClient();
-  const path = `${collectionId}/${itemId}/${file.name}`;
+  const path = `${collectionId}/${itemId}/${file.name.replace(/[^a-zA-Z0-9._-]/g, "_")}`;
 
   const buffer = Buffer.from(await file.arrayBuffer());
   const { error: uploadError } = await admin.storage
     .from("worksheets")
     .upload(path, buffer, { upsert: true, contentType: "application/pdf" });
 
-  if (uploadError) throw new Error(uploadError.message);
+  if (uploadError) {
+    throw new Error(
+      uploadError.message.includes("Bucket not found")
+        ? "Storage bucket “worksheets” is missing. Create a public bucket with that name in Supabase."
+        : uploadError.message,
+    );
+  }
 
   const { data: urlData } = admin.storage.from("worksheets").getPublicUrl(path);
+  const pdfUrl = urlData.publicUrl;
 
-  const supabase = await createClient();
-  await supabase
+  const { error: updateError } = await admin
     .from("activity_items")
-    .update({ pdf_path: urlData.publicUrl })
+    .update({ pdf_path: pdfUrl })
     .eq("item_id", itemId);
 
-  revalidatePath(`/admin/series/${collectionId}/items/${itemId}`);
+  if (updateError) throw new Error(updateError.message);
+
+  revalidatePath(`/admin/series/${collectionId}`);
+  return pdfUrl;
 }

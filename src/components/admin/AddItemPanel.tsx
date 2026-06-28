@@ -6,6 +6,7 @@ import {
   createWatchItemAction,
   createActivityItemAction,
 } from "@/app/admin/actions";
+import { parseVideoUrl } from "@/lib/parse-video-url";
 import { LoomPicker } from "./LoomPicker";
 
 type Props = {
@@ -80,12 +81,8 @@ export function AddItemPanel({ collectionId }: Props) {
             const fd = new FormData(e.currentTarget);
             const url = String(fd.get("url"));
             const title = String(fd.get("title") || "Video");
-            const loomMatch = url.match(/loom\.com\/(?:share|embed)\/([a-zA-Z0-9]+)/);
-            const ytMatch = url.match(
-              /(?:youtube\.com\/watch\?v=|youtu\.be\/)([a-zA-Z0-9_-]+)/,
-            );
-            if (loomMatch) await addWatch("loom", loomMatch[1], title);
-            else if (ytMatch) await addWatch("youtube", ytMatch[1], title);
+            const parsed = parseVideoUrl(url);
+            if (parsed) await addWatch(parsed.provider, parsed.id, title);
           }}
           className="space-y-3"
         >
