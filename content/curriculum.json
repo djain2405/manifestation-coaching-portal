@@ -1,0 +1,124 @@
+{
+  "site": {
+    "title": "Manifest Portal",
+    "tagline": "Settle in. Watch at your pace, in your order.",
+    "passwordHint": "Ask the host for the portal key.",
+    "theme": "light",
+    "labels": {
+      "collection": "Series",
+      "item": "Lesson",
+      "path": "Your lessons",
+      "continue": "Pick up where you left off",
+      "continueLesson": "Continue",
+      "markWatched": "I finished this video",
+      "markUnwatched": "Finished ✓",
+      "markActivityDone": "I'm done with this worksheet",
+      "markActivityUndone": "Done ✓",
+      "upNext": "Up next",
+      "progress": "finished",
+      "allItems": "All lessons",
+      "welcomeBack": "Welcome back",
+      "activity": "Worksheet",
+      "downloadWorksheet": "Download a printable copy",
+      "yourNotes": "Write your notes",
+      "writeNotes": "Write your notes here",
+      "printCopy": "Print a copy",
+      "notesAutoSave": "Your notes save automatically.",
+      "savedLocally": "Saved",
+      "done": "Done",
+      "stepOf": "Step {current} of {total}",
+      "lessonsFinished": "You've finished {done} of {total} lessons"
+    }
+  },
+  "collections": [
+    {
+      "slug": "foundations",
+      "title": "First Light",
+      "description": "A short run of ideas—watch in order, or dip in wherever curiosity pulls you.",
+      "accent": "#163832",
+      "cover": {
+        "gradient": "from-[#163832] via-[#305855] to-[#212135]"
+      },
+      "items": [
+        {
+          "slug": "welcome",
+          "type": "watch",
+          "title": "Door opens",
+          "subtitle": "Start here",
+          "emoji": "✦",
+          "description": "What this series is about and how to ride along.",
+          "highlight": "Every great run starts with one small yes.",
+          "embed": {
+            "provider": "youtube",
+            "id": "VQAeoXef6sI"
+          },
+          "durationMinutes": 19
+        },
+        {
+          "slug": "building-blocks",
+          "type": "watch",
+          "title": "Raw materials",
+          "subtitle": "The vocabulary",
+          "emoji": "◆",
+          "description": "The building blocks we'll remix throughout.",
+          "embed": {
+            "provider": "youtube",
+            "id": "Z0qbsWSVaWQ"
+          },
+          "durationMinutes": 12
+        },
+        {
+          "slug": "reflect-after-raw-materials",
+          "type": "activity",
+          "title": "Pause & reflect",
+          "subtitle": "Worksheet",
+          "emoji": "📝",
+          "description": "Before moving on, sit with what you just watched.",
+          "activity": {
+            "intro": "No wrong answers—this is for you. Jot notes here or use the printable worksheet.",
+            "estimatedMinutes": 10,
+            "pdf": "/worksheets/foundations-reflect.pdf",
+            "pdfLabel": "Download printable worksheet",
+            "prompts": [
+              {
+                "id": "stuck",
+                "label": "What idea stuck with you most?",
+                "kind": "longtext",
+                "placeholder": "A sentence or two is enough…"
+              },
+              {
+                "id": "try",
+                "label": "One thing you'll try this week",
+                "kind": "shorttext",
+                "placeholder": "Keep it small and real"
+              },
+              {
+                "id": "ready",
+                "label": "I'm ready for the next piece",
+                "kind": "checkbox"
+              }
+            ],
+            "submit": {
+              "enabled": false,
+              "method": "email"
+            }
+          }
+        },
+        {
+          "slug": "putting-it-together",
+          "type": "watch",
+          "title": "The mix",
+          "subtitle": "Put it together",
+          "emoji": "▶",
+          "description": "One flow that ties everything into something you can use.",
+          "highlight": "This is where it clicks.",
+          "embed": {
+            "provider": "youtube",
+            "id": "kkzcCz1c2mE"
+          },
+          "durationMinutes": 15
+        }
+      ]
+    }
+  ]
+}
