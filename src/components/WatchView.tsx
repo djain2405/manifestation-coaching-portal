@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import type { Collection, Item } from "@/lib/types";
 import type { SiteLabels } from "@/lib/types";
 import { useProgress } from "@/hooks/useProgress";
+import { isWatchItem } from "@/lib/items";
 import { EmbedPlayer } from "./EmbedPlayer";
 import { CompleteBurst } from "./CompleteBurst";
 
@@ -31,6 +32,9 @@ export function WatchView({ collection, item, index, labels }: Props) {
   const prev = index > 0 ? items[index - 1] : null;
   const next = index < items.length - 1 ? items[index + 1] : null;
   const done = hydrated && isComplete(item.slug);
+  const embed =
+    item.embed ??
+    (isWatchItem(item) ? { provider: "youtube" as const, id: "pending" } : undefined);
 
   function handleToggle() {
     const wasDone = done;
@@ -60,7 +64,9 @@ export function WatchView({ collection, item, index, labels }: Props) {
           <h1 className="font-display text-3xl text-foreground sm:text-4xl">
             {item.title}
           </h1>
-          <p className="max-w-2xl text-lg text-muted">{item.description}</p>
+          {item.description ? (
+            <p className="max-w-2xl text-lg text-muted">{item.description}</p>
+          ) : null}
           {item.highlight ? (
             <blockquote className="border-l-2 border-accent/60 pl-4 font-display text-xl italic text-muted">
               {item.highlight}
@@ -68,11 +74,9 @@ export function WatchView({ collection, item, index, labels }: Props) {
           ) : null}
         </header>
 
-        {item.embed ? (
-          <EmbedPlayer embed={item.embed} title={item.title} />
-        ) : (
-          <p className="text-muted">Video not configured for this lesson.</p>
-        )}
+        {embed ? (
+          <EmbedPlayer embed={embed} title={item.title} />
+        ) : null}
 
         <div className="flex flex-col gap-3 border-t border-border pt-8 sm:flex-row sm:flex-wrap sm:items-center">
           <button

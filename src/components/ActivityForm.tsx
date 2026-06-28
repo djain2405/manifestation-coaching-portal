@@ -50,7 +50,17 @@ export function ActivityForm({
       </div>
 
       <div className="space-y-5">
-        {activity.prompts.map((prompt) => {
+        {activity.prompts.length === 0 ? (
+          <textarea
+            id="worksheet-notes"
+            rows={8}
+            value={typeof draft.notes === "string" ? draft.notes : ""}
+            onChange={(e) => setField("notes", e.target.value)}
+            placeholder={labels.writeNotes ?? "Write your notes here…"}
+            className="w-full resize-y rounded-xl border border-border bg-background px-4 py-3 text-base text-foreground placeholder:text-muted focus:border-accent focus:outline-none focus:ring-2 focus:ring-accent/25"
+          />
+        ) : (
+          activity.prompts.map((prompt) => {
           const value = draft[prompt.id];
 
           if (prompt.kind === "checkbox") {
@@ -109,7 +119,8 @@ export function ActivityForm({
               />
             </div>
           );
-        })}
+        })
+        )}
       </div>
     </div>
   );

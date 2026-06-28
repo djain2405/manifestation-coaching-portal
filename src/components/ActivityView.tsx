@@ -30,9 +30,7 @@ export function ActivityView({ collection, item, index, labels }: Props) {
   }, [item.slug, setLastLesson]);
 
   if (!activity) {
-    return (
-      <p className="text-muted">This worksheet is not configured yet.</p>
-    );
+    return null;
   }
 
   const prev = index > 0 ? items[index - 1] : null;
@@ -72,7 +70,9 @@ export function ActivityView({ collection, item, index, labels }: Props) {
           <h1 className="font-display text-3xl text-foreground sm:text-4xl">
             {item.title}
           </h1>
-          <p className="max-w-2xl text-lg text-muted">{item.description}</p>
+          {item.description ? (
+            <p className="max-w-2xl text-lg text-muted">{item.description}</p>
+          ) : null}
           {activity.intro ? (
             <p className="max-w-2xl rounded-xl border border-border bg-card px-4 py-3 text-foreground">
               {activity.intro}
