@@ -2,6 +2,7 @@ import Link from "next/link";
 import { requireAdmin } from "@/lib/session";
 import { getAllCollectionsForAdmin } from "@/lib/curriculum";
 import { createCollectionAction } from "@/app/admin/actions";
+import { DeleteSeriesButton } from "@/components/admin/DeleteSeriesButton";
 
 export default async function AdminSeriesPage() {
   await requireAdmin();
@@ -36,19 +37,34 @@ export default async function AdminSeriesPage() {
 
       <ul className="space-y-3">
         {collections.map((c) => (
-          <li key={c.id ?? c.slug}>
+          <li
+            key={c.id ?? c.slug}
+            className="flex items-center justify-between gap-4 rounded-2xl border border-border bg-white p-5"
+          >
             <Link
               href={`/admin/series/${c.id}`}
-              className="flex items-center justify-between rounded-2xl border border-border bg-white p-5 hover:border-accent/40"
+              className="min-w-0 flex-1 hover:opacity-90"
             >
-              <div>
-                <h2 className="font-display text-xl text-foreground">{c.title}</h2>
-                <p className="text-sm text-muted">
-                  {c.items.length} lessons · /course/{c.slug}
-                </p>
-              </div>
-              <span className="text-accent">Edit →</span>
+              <h2 className="font-display text-xl text-foreground">{c.title}</h2>
+              <p className="text-sm text-muted">
+                {c.items.length} lessons · /course/{c.slug}
+              </p>
             </Link>
+            <div className="flex shrink-0 items-center gap-2">
+              <Link
+                href={`/admin/series/${c.id}`}
+                className="rounded-lg border border-border px-3 py-2 text-sm text-accent"
+              >
+                Edit
+              </Link>
+              {c.id ? (
+                <DeleteSeriesButton
+                  collectionId={c.id}
+                  title={c.title}
+                  lessonCount={c.items.length}
+                />
+              ) : null}
+            </div>
           </li>
         ))}
       </ul>

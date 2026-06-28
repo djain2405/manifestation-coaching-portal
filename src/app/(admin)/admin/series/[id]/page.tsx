@@ -5,6 +5,7 @@ import { getAllCollectionsForAdmin } from "@/lib/curriculum";
 import { updateCollectionAction } from "@/app/admin/actions";
 import { SeriesItemList } from "@/components/admin/SeriesItemList";
 import { AddItemPanel } from "@/components/admin/AddItemPanel";
+import { DeleteSeriesButton } from "@/components/admin/DeleteSeriesButton";
 
 type Props = {
   params: Promise<{ id: string }>;
@@ -83,6 +84,13 @@ export default async function AdminSeriesDetailPage({ params }: Props) {
         <SeriesItemList collectionId={id} items={collection.items} />
         <AddItemPanel collectionId={id} />
       </section>
+
+      <DeleteSeriesButton
+        collectionId={id}
+        title={collection.title}
+        lessonCount={collection.items.length}
+        variant="panel"
+      />
     </div>
   );
 }

@@ -128,6 +128,23 @@ export async function updateCollectionAction(
   if (error) throw new Error(error.message);
   revalidatePath(`/admin/series/${id}`);
   revalidatePath("/admin/series");
+  revalidatePath("/");
+}
+
+export async function deleteCollectionAction(collectionId: string) {
+  await requireAdmin();
+  const supabase = await createClient();
+
+  const { error } = await supabase
+    .from("collections")
+    .delete()
+    .eq("id", collectionId);
+
+  if (error) throw new Error(error.message);
+
+  revalidatePath("/admin/series");
+  revalidatePath("/");
+  redirect("/admin/series");
 }
 
 export async function reorderItemsAction(
@@ -263,13 +280,14 @@ export async function updateWatchItemAction(
 
   if (itemError) throw new Error(itemError.message);
 
-  const { error: watchError } = await supabase
-    .from("watch_items")
-    .update({
+  const { error: watchError } = await supabase.from("watch_items").upsert(
+    {
+      item_id: itemId,
       embed_provider: parsed.provider,
       embed_id: parsed.id,
-    })
-    .eq("item_id", itemId);
+    },
+    { onConflict: "item_id" },
+  );
 
   if (watchError) throw new Error(watchError.message);
 

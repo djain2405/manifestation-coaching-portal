@@ -127,25 +127,25 @@ async function main() {
         continue;
       }
 
-      if (type === "watch" && item.embed) {
+      if (type === "watch") {
         await supabase.from("watch_items").upsert({
           item_id: row.id,
-          embed_provider: item.embed.provider,
-          embed_id: item.embed.id,
+          embed_provider: item.embed?.provider ?? "youtube",
+          embed_id: item.embed?.id ?? "pending",
           duration_minutes: item.durationMinutes ?? null,
         });
       }
 
-      if (type === "activity" && item.activity) {
+      if (type === "activity") {
         await supabase.from("activity_items").upsert({
           item_id: row.id,
-          intro: item.activity.intro ?? null,
-          pdf_path: item.activity.pdf ?? null,
-          pdf_label: item.activity.pdfLabel ?? null,
-          estimated_minutes: item.activity.estimatedMinutes ?? null,
+          intro: item.activity?.intro ?? null,
+          pdf_path: item.activity?.pdf ?? null,
+          pdf_label: item.activity?.pdfLabel ?? null,
+          estimated_minutes: item.activity?.estimatedMinutes ?? null,
         });
 
-        const prompts = item.activity.prompts ?? [];
+        const prompts = item.activity?.prompts ?? [];
         for (let pi = 0; pi < prompts.length; pi++) {
           const p = prompts[pi];
           await supabase.from("activity_prompts").upsert(

@@ -1,13 +1,13 @@
 {
   "site": {
     "title": "Manifest Portal",
-    "tagline": "Settle in. Watch at your pace, in your order.",
+    "tagline": "Move through each phase at your pace. Watch, reflect, and integrate.",
     "passwordHint": "Ask the host for the portal key.",
     "theme": "light",
     "labels": {
-      "collection": "Series",
+      "collection": "Module",
       "item": "Lesson",
-      "path": "Your lessons",
+      "path": "Your path",
       "continue": "Pick up where you left off",
       "continueLesson": "Continue",
       "markWatched": "I finished this video",
@@ -32,91 +32,255 @@
   },
   "collections": [
     {
-      "slug": "foundations",
-      "title": "First Light",
-      "description": "A short run of ideas—watch in order, or dip in wherever curiosity pulls you.",
+      "slug": "phase-1-module-1",
+      "title": "Phase 1 — Module 1: Core Foundation Identity & Mindset",
+      "description": "Goal: Build the foundation of consciousness, identity, and belief systems.",
       "accent": "#163832",
       "cover": {
         "gradient": "from-[#163832] via-[#305855] to-[#212135]"
       },
       "items": [
         {
-          "slug": "welcome",
+          "slug": "first-step-highest-version",
           "type": "watch",
-          "title": "Door opens",
-          "subtitle": "Start here",
-          "emoji": "✦",
-          "description": "What this series is about and how to ride along.",
-          "highlight": "Every great run starts with one small yes.",
-          "embed": {
-            "provider": "youtube",
-            "id": "VQAeoXef6sI"
-          },
-          "durationMinutes": 19
+          "title": "First step towards becoming the highest version of yourself",
+          "subtitle": "Lesson 1.1 — Recognize Your Power",
+          "emoji": "▶",
+          "description": "Add your YouTube link in admin when ready."
         },
         {
-          "slug": "building-blocks",
+          "slug": "you-are-a-god",
           "type": "watch",
-          "title": "Raw materials",
-          "subtitle": "The vocabulary",
-          "emoji": "◆",
-          "description": "The building blocks we'll remix throughout.",
-          "embed": {
-            "provider": "youtube",
-            "id": "Z0qbsWSVaWQ"
-          },
-          "durationMinutes": 12
+          "title": "You are a god",
+          "subtitle": "Lesson 1.1 — Recognize Your Power",
+          "emoji": "▶",
+          "description": "Add your YouTube link in admin when ready."
         },
         {
-          "slug": "reflect-after-raw-materials",
+          "slug": "quantum-meditation",
+          "type": "watch",
+          "title": "Quantum Meditation",
+          "subtitle": "Lesson 1.1 — Recognize Your Power",
+          "emoji": "▶",
+          "description": "Add your YouTube link in admin when ready."
+        },
+        {
+          "slug": "creating-your-mind-movie",
+          "type": "watch",
+          "title": "Creating Your Very Own Mind Movie",
+          "subtitle": "Lesson 1.1 — Recognize Your Power",
+          "emoji": "▶",
+          "description": "Craft a visual representation of your desired reality. Add your YouTube link in admin when ready."
+        },
+        {
+          "slug": "transforming-attachment-magnet",
+          "type": "watch",
+          "title": "Transforming Attachment and becoming an actual MAGNET for what you truly want",
+          "subtitle": "Lesson 1.1 — Recognize Your Power",
+          "emoji": "▶",
+          "description": "Add your YouTube link in admin when ready."
+        },
+        {
+          "slug": "understanding-non-duality-awareness",
+          "type": "watch",
+          "title": "Understanding Non-Duality, Awareness & Specific desire",
+          "subtitle": "Lesson 1.1 — Recognize Your Power",
+          "emoji": "▶",
+          "description": "Add your YouTube link in admin when ready."
+        },
+        {
+          "slug": "worksheet-1-identifying-yourself",
           "type": "activity",
-          "title": "Pause & reflect",
-          "subtitle": "Worksheet",
+          "title": "Worksheet 1 – Identifying Yourself",
+          "subtitle": "Lesson 1.2 — Self-Awareness & Worksheets",
           "emoji": "📝",
-          "description": "Before moving on, sit with what you just watched.",
+          "description": "Audit your current identity.",
           "activity": {
-            "intro": "No wrong answers—this is for you. Jot notes here or use the printable worksheet.",
-            "estimatedMinutes": 10,
-            "pdf": "/worksheets/foundations-reflect.pdf",
+            "intro": "Complete this worksheet at your own pace. Upload the PDF in admin when ready.",
             "pdfLabel": "Download printable worksheet",
-            "prompts": [
-              {
-                "id": "stuck",
-                "label": "What idea stuck with you most?",
-                "kind": "longtext",
-                "placeholder": "A sentence or two is enough…"
-              },
-              {
-                "id": "try",
-                "label": "One thing you'll try this week",
-                "kind": "shorttext",
-                "placeholder": "Keep it small and real"
-              },
-              {
-                "id": "ready",
-                "label": "I'm ready for the next piece",
-                "kind": "checkbox"
-              }
-            ],
-            "submit": {
-              "enabled": false,
-              "method": "email"
-            }
+            "prompts": []
           }
         },
         {
-          "slug": "putting-it-together",
+          "slug": "five-step-formula-dream-reality",
           "type": "watch",
-          "title": "The mix",
-          "subtitle": "Put it together",
+          "title": "5 STEP FORMULA FOR CREATING YOUR DREAM REALITY",
+          "subtitle": "Lesson 1.2 — Self-Awareness & Worksheets",
           "emoji": "▶",
-          "description": "One flow that ties everything into something you can use.",
-          "highlight": "This is where it clicks.",
-          "embed": {
-            "provider": "youtube",
-            "id": "kkzcCz1c2mE"
-          },
-          "durationMinutes": 15
+          "description": "Add your YouTube link in admin when ready."
+        },
+        {
+          "slug": "forget-roles-manifest-soul",
+          "type": "watch",
+          "title": "Forget about your roles & manifest from your soul",
+          "subtitle": "Lesson 1.2 — Self-Awareness & Worksheets",
+          "emoji": "▶",
+          "description": "Add your YouTube link in admin when ready."
+        },
+        {
+          "slug": "abundance-natural-state",
+          "type": "watch",
+          "title": "Abundance Is Your Natural State & Here's How You Can Tap Into It",
+          "subtitle": "Lesson 1.2 — Self-Awareness & Worksheets",
+          "emoji": "▶",
+          "description": "Add your YouTube link in admin when ready."
+        },
+        {
+          "slug": "destination-is-the-journey",
+          "type": "watch",
+          "title": "The destination IS the journey",
+          "subtitle": "Lesson 1.2 — Self-Awareness & Worksheets",
+          "emoji": "▶",
+          "description": "Add your YouTube link in admin when ready."
+        },
+        {
+          "slug": "worksheet-2-rewiring-reality",
+          "type": "activity",
+          "title": "Worksheet 2 – Rewiring Your Reality",
+          "subtitle": "Lesson 1.2 — Self-Awareness & Worksheets",
+          "emoji": "📝",
+          "description": "Practical steps to reprogram limiting beliefs.",
+          "activity": {
+            "intro": "Complete this worksheet at your own pace. Upload the PDF in admin when ready.",
+            "pdfLabel": "Download printable worksheet",
+            "prompts": []
+          }
+        },
+        {
+          "slug": "worksheet-3-recall-recalibrate",
+          "type": "activity",
+          "title": "Worksheet 3 – Recall & Recalibrate Your Beliefs",
+          "subtitle": "Lesson 1.2 — Self-Awareness & Worksheets",
+          "emoji": "📝",
+          "description": "Identify old patterns and reset energy.",
+          "activity": {
+            "intro": "Complete this worksheet at your own pace. Upload the PDF in admin when ready.",
+            "pdfLabel": "Download printable worksheet",
+            "prompts": []
+          }
+        },
+        {
+          "slug": "identity-work-manifestations",
+          "type": "watch",
+          "title": "How \"identity work\" leads to successful manifestations",
+          "subtitle": "Lesson 1.2 — Self-Awareness & Worksheets",
+          "emoji": "▶",
+          "description": "Add your YouTube link in admin when ready."
+        },
+        {
+          "slug": "awareness-is-the-answer",
+          "type": "watch",
+          "title": "Awareness is the Answer",
+          "subtitle": "Lesson 1.2 — Self-Awareness & Worksheets",
+          "emoji": "▶",
+          "description": "Add your YouTube link in admin when ready."
+        },
+        {
+          "slug": "power-of-your-intention",
+          "type": "watch",
+          "title": "Power of Your Intention",
+          "subtitle": "Lesson 1.2 — Self-Awareness & Worksheets",
+          "emoji": "▶",
+          "description": "Align identity and goals for sustainable results. Add your YouTube link in admin when ready."
+        },
+        {
+          "slug": "navigating-thoughts",
+          "type": "watch",
+          "title": "Navigating Thoughts",
+          "subtitle": "Lesson 1.2 — Self-Awareness & Worksheets",
+          "emoji": "▶",
+          "description": "Add your YouTube link in admin when ready."
+        },
+        {
+          "slug": "turn-any-situation-favour",
+          "type": "watch",
+          "title": "How to turn ANY situation in your favour",
+          "subtitle": "Lesson 1.2 — Self-Awareness & Worksheets",
+          "emoji": "▶",
+          "description": "Add your YouTube link in admin when ready."
+        }
+      ]
+    },
+    {
+      "slug": "phase-2-module-2",
+      "title": "Phase 2 — Module 2: Clearing Resistance & Flow",
+      "description": "Goal: Remove blocks, raise vibration, and get into a state of effortless receiving.",
+      "accent": "#4a1942",
+      "cover": {
+        "gradient": "from-[#4a1942] via-[#7b2d6e] to-[#212135]"
+      },
+      "items": [
+        {
+          "slug": "reprogram-every-belief",
+          "type": "watch",
+          "title": "Reprogram Every Single Belief",
+          "subtitle": "Lesson 2.1 — Emotional Clearing",
+          "emoji": "▶",
+          "description": "Stop jealousy, energetic leaks, and triggers. Add your YouTube link in admin when ready."
+        },
+        {
+          "slug": "ten-blocks-ten-solutions",
+          "type": "watch",
+          "title": "10 Blocks, 10 Solutions",
+          "subtitle": "Lesson 2.1 — Emotional Clearing",
+          "emoji": "▶",
+          "description": "Recognize major emotional/energetic blocks and resolve them. Add your YouTube link in admin when ready."
+        },
+        {
+          "slug": "e-motion-high-vibration",
+          "type": "watch",
+          "title": "E-motion",
+          "subtitle": "Lesson 2.1 — Emotional Clearing",
+          "emoji": "▶",
+          "description": "Stay in a high vibrational state by disregarding negative energy. Add your YouTube link in admin when ready."
+        },
+        {
+          "slug": "flipping-your-floors",
+          "type": "watch",
+          "title": "Flipping Your Floors",
+          "subtitle": "Lesson 2.1 — Emotional Clearing",
+          "emoji": "▶",
+          "description": "Reflect on current emotions and create an action plan. Add your YouTube link in admin when ready."
+        },
+        {
+          "slug": "unblocking-chakras-transformation",
+          "type": "watch",
+          "title": "Unblocking Your Chakras for Transformation",
+          "subtitle": "Lesson 2.1 — Emotional Clearing",
+          "emoji": "▶",
+          "description": "Commit to overcoming unconscious addiction patterns. Add your YouTube link in admin when ready."
+        },
+        {
+          "slug": "receiving-mode-vagus-nerve",
+          "type": "watch",
+          "title": "This is How You Get Into Your Receiving Mode",
+          "subtitle": "Lesson 2.2 — Flow & Receiving",
+          "emoji": "▶",
+          "description": "Activate vagus nerve and intuitive body for easier manifestation. Add your YouTube link in admin when ready."
+        },
+        {
+          "slug": "uncertainty-equals-miracles",
+          "type": "watch",
+          "title": "Uncertainty = Miracles",
+          "subtitle": "Lesson 2.2 — Flow & Receiving",
+          "emoji": "▶",
+          "description": "Learn to embrace uncertainty as part of manifestation. Add your YouTube link in admin when ready."
+        },
+        {
+          "slug": "control-what-you-can-control",
+          "type": "watch",
+          "title": "Control What You Can Control and Let the Magic Flow",
+          "subtitle": "Lesson 2.2 — Flow & Receiving",
+          "emoji": "▶",
+          "description": "Focus energy where it matters most. Add your YouTube link in admin when ready."
+        },
+        {
+          "slug": "magic-in-the-mundane",
+          "type": "watch",
+          "title": "Magic in the Mundane",
+          "subtitle": "Lesson 2.2 — Flow & Receiving",
+          "emoji": "▶",
+          "description": "Do everyday activities in a higher vibrational state. Add your YouTube link in admin when ready."
         }
       ]
     }
