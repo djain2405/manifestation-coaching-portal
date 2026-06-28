@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import type { CourseProgress } from "@/lib/types";
 import {
   fetchProgressForCollection,
@@ -41,7 +41,8 @@ type ItemRef = { id?: string; slug: string; title?: string };
 
 export function useProgress(collectionSlug: string, items: ItemRef[]) {
   const itemSlugs = items.map((i) => i.slug);
-  const slugToId = new Map(
+  const slugToIdRef = useRef(new Map<string, string>());
+  slugToIdRef.current = new Map(
     items.filter((i) => i.id).map((i) => [i.slug, i.id!]),
   );
   const useServer = isSupabaseConfigured() && items.some((i) => i.id);
@@ -51,6 +52,8 @@ export function useProgress(collectionSlug: string, items: ItemRef[]) {
     lastLesson: null,
   });
   const [hydrated, setHydrated] = useState(false);
+  const progressRef = useRef(progress);
+  progressRef.current = progress;
 
   const itemsKey = items.map((i) => `${i.id ?? ""}:${i.slug}`).join(",");
 
@@ -64,11 +67,11 @@ export function useProgress(collectionSlug: string, items: ItemRef[]) {
 
         if (local.completed.length > 0 && server.completedSlugs.length === 0) {
           for (const slug of local.completed) {
-            const id = slugToId.get(slug);
+            const id = slugToIdRef.current.get(slug);
             if (id) await setItemCompleted(id, true);
           }
           if (local.lastLesson) {
-            const id = slugToId.get(local.lastLesson);
+            const id = slugToIdRef.current.get(local.lastLesson);
             if (id) await setItemOpened(id);
           }
           localStorage.removeItem(storageKey(collectionSlug));
@@ -107,8 +110,10 @@ export function useProgress(collectionSlug: string, items: ItemRef[]) {
 
   const setLastLesson = useCallback(
     (lessonSlug: string) => {
+      if (progressRef.current.lastLesson === lessonSlug) return;
+
       if (useServer) {
-        const id = slugToId.get(lessonSlug);
+        const id = slugToIdRef.current.get(lessonSlug);
         if (id) void setItemOpened(id);
         setProgress((p) => ({ ...p, lastLesson: lessonSlug }));
         return;
@@ -117,13 +122,13 @@ export function useProgress(collectionSlug: string, items: ItemRef[]) {
       if (current.lastLesson === lessonSlug) return;
       persistLocal({ ...current, lastLesson: lessonSlug });
     },
-    [collectionSlug, persistLocal, useServer, slugToId],
+    [collectionSlug, persistLocal, useServer],
   );
 
   const markComplete = useCallback(
     (lessonSlug: string) => {
       if (useServer) {
-        const id = slugToId.get(lessonSlug);
+        const id = slugToIdRef.current.get(lessonSlug);
         if (id) void setItemCompleted(id, true);
         setProgress((p) => ({
           completed: p.completed.includes(lessonSlug)
@@ -141,13 +146,13 @@ export function useProgress(collectionSlug: string, items: ItemRef[]) {
         lastLesson: lessonSlug,
       });
     },
-    [collectionSlug, persistLocal, useServer, slugToId],
+    [collectionSlug, persistLocal, useServer],
   );
 
   const toggleComplete = useCallback(
     (lessonSlug: string) => {
       if (useServer) {
-        const id = slugToId.get(lessonSlug);
+        const id = slugToIdRef.current.get(lessonSlug);
         const isDone = progress.completed.includes(lessonSlug);
         if (id) void setItemCompleted(id, !isDone);
         setProgress((p) => ({
@@ -165,7 +170,7 @@ export function useProgress(collectionSlug: string, items: ItemRef[]) {
         : [...current.completed, lessonSlug];
       persistLocal({ completed, lastLesson: lessonSlug });
     },
-    [collectionSlug, persistLocal, progress.completed, useServer, slugToId],
+    [collectionSlug, persistLocal, progress.completed, useServer],
   );
 
   const completedCount = progress.completed.filter((s) =>

@@ -14,20 +14,14 @@ type Props = {
 
 export function AddItemPanel({ collectionId }: Props) {
   const router = useRouter();
-  const [tab, setTab] = useState<"loom" | "paste" | "activity">("loom");
+  const [tab, setTab] = useState<"loom" | "paste" | "activity">("paste");
   const [pending, setPending] = useState(false);
 
   async function addWatch(embedProvider: string, embedId: string, title: string) {
     setPending(true);
     try {
-      const slug = title
-        .toLowerCase()
-        .replace(/[^a-z0-9]+/g, "-")
-        .replace(/^-|-$/g, "")
-        .slice(0, 48) || `video-${Date.now()}`;
       await createWatchItemAction(collectionId, {
         title,
-        slug,
         embedProvider,
         embedId,
       });
@@ -44,7 +38,6 @@ export function AddItemPanel({ collectionId }: Props) {
     try {
       await createActivityItemAction(collectionId, {
         title: String(fd.get("title")),
-        slug: String(fd.get("slug")),
       });
       e.currentTarget.reset();
       router.refresh();
@@ -123,12 +116,6 @@ export function AddItemPanel({ collectionId }: Props) {
           <input
             name="title"
             placeholder="Worksheet title"
-            required
-            className="w-full min-h-12 rounded-xl border border-border px-4"
-          />
-          <input
-            name="slug"
-            placeholder="url-slug"
             required
             className="w-full min-h-12 rounded-xl border border-border px-4"
           />

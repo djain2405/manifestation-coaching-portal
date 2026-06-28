@@ -26,12 +26,6 @@ export default async function AdminSeriesPage() {
           required
           className="min-h-12 flex-1 rounded-xl border border-border px-4 text-base"
         />
-        <input
-          name="slug"
-          placeholder="url-slug"
-          required
-          className="min-h-12 w-40 rounded-xl border border-border px-4 text-base"
-        />
         <button
           type="submit"
           className="min-h-12 rounded-lg bg-accent px-6 font-semibold text-accent-foreground"

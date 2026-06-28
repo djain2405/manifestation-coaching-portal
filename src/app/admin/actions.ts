@@ -5,7 +5,36 @@ import { revalidatePath } from "next/cache";
 import { randomBytes } from "crypto";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { requireAdmin } from "@/lib/session";
+import { slugify, uniqueSlug } from "@/lib/slug";
 import { createClient } from "@/lib/supabase/server";
+import type { SupabaseClient } from "@supabase/supabase-js";
+
+async function uniqueItemSlug(
+  supabase: SupabaseClient,
+  collectionId: string,
+  title: string,
+  fallback: string,
+) {
+  const base = slugify(title, fallback);
+  const { data } = await supabase
+    .from("items")
+    .select("slug")
+    .eq("collection_id", collectionId);
+
+  const taken = new Set((data ?? []).map((row) => row.slug));
+  return uniqueSlug(base, taken);
+}
+
+async function uniqueCollectionSlug(
+  supabase: SupabaseClient,
+  title: string,
+) {
+  const base = slugify(title, "series");
+  const { data } = await supabase.from("collections").select("slug");
+
+  const taken = new Set((data ?? []).map((row) => row.slug));
+  return uniqueSlug(base, taken);
+}
 
 export async function createInviteAction(formData: FormData) {
   await requireAdmin();
@@ -58,10 +87,7 @@ export async function createCollectionAction(formData: FormData) {
   const supabase = await createClient();
 
   const title = String(formData.get("title") ?? "").trim();
-  const slug = String(formData.get("slug") ?? "")
-    .trim()
-    .toLowerCase()
-    .replace(/[^a-z0-9-]/g, "-");
+  const slug = await uniqueCollectionSlug(supabase, title);
 
   const { data, error } = await supabase
     .from("collections")
@@ -125,7 +151,6 @@ export async function createWatchItemAction(
   collectionId: string,
   data: {
     title: string;
-    slug: string;
     embedProvider: string;
     embedId: string;
     durationMinutes?: number;
@@ -133,6 +158,7 @@ export async function createWatchItemAction(
 ) {
   await requireAdmin();
   const supabase = await createClient();
+  const slug = await uniqueItemSlug(supabase, collectionId, data.title, "video");
 
   const { count } = await supabase
     .from("items")
@@ -143,7 +169,7 @@ export async function createWatchItemAction(
     .from("items")
     .insert({
       collection_id: collectionId,
-      slug: data.slug,
+      slug,
       type: "watch",
       title: data.title,
       description: "",
@@ -167,10 +193,16 @@ export async function createWatchItemAction(
 
 export async function createActivityItemAction(
   collectionId: string,
-  data: { title: string; slug: string },
+  data: { title: string },
 ) {
   await requireAdmin();
   const supabase = await createClient();
+  const slug = await uniqueItemSlug(
+    supabase,
+    collectionId,
+    data.title,
+    "worksheet",
+  );
 
   const { count } = await supabase
     .from("items")
@@ -181,7 +213,7 @@ export async function createActivityItemAction(
     .from("items")
     .insert({
       collection_id: collectionId,
-      slug: data.slug,
+      slug,
       type: "activity",
       title: data.title,
       description: "",
