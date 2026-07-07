@@ -6,7 +6,7 @@ Portal URL: **https://manifestation-coaching-portal.vercel.app**
 
 ## Part 1 — Divya: add Veer as admin (one-time)
 
-You need Veer’s **exact signup email** (e.g. `veer@example.com`). Replace that below everywhere.
+Veer’s signup email: **manifest.miracles.veer@gmail.com**
 
 ### Step A — Update environment variable (required)
 
