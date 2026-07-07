@@ -15,6 +15,8 @@ const ERROR_MESSAGES: Record<string, string> = {
   invite: "This invite link is invalid or has expired. Ask the host for a new one.",
   email: "This invite is for a different email address.",
   signup: "We couldn’t create your account. The email may already be in use.",
+  service:
+    "We couldn’t reach the account service. The host needs to check the Supabase connection.",
 };
 
 export default async function SignupPage({ searchParams }: Props) {

@@ -170,10 +170,18 @@ async function main() {
   const expires = new Date();
   expires.setDate(expires.getDate() + 30);
 
-  await supabase.from("invites").insert({
+  const { error: inviteError } = await supabase.from("invites").insert({
     token,
     expires_at: expires.toISOString(),
   });
+
+  if (inviteError) {
+    console.error("\nFailed to create invite:", inviteError.message);
+    console.error(
+      "Check NEXT_PUBLIC_SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY in .env.local",
+    );
+    process.exit(1);
+  }
 
   console.log("\nBootstrap invite link (share with first user):");
   console.log(`  /signup?invite=${token}`);

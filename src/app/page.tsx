@@ -1,5 +1,5 @@
 import { redirect } from "next/navigation";
-import { checkAuthenticated } from "@/lib/session";
+import { checkAuthenticated, isAdmin } from "@/lib/session";
 import { getCollections, getCurriculum } from "@/lib/curriculum";
 import { DEFAULT_COURSE_PATH } from "@/lib/constants";
 import { CollectionGrid } from "@/components/CollectionGrid";
@@ -13,10 +13,13 @@ export default async function Home() {
 
   const collections = await getCollections();
   const { site } = await getCurriculum();
+  const admin = await isAdmin();
 
   if (collections.length === 1) {
     redirect(DEFAULT_COURSE_PATH);
   }
 
-  return <CollectionGrid site={site} collections={collections} />;
+  return (
+    <CollectionGrid site={site} collections={collections} showAdminLink={admin} />
+  );
 }

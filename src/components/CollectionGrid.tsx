@@ -7,9 +7,10 @@ import { SignOutButton } from "./SignOutButton";
 type Props = {
   site: Site;
   collections: Collection[];
+  showAdminLink?: boolean;
 };
 
-export function CollectionGrid({ site, collections }: Props) {
+export function CollectionGrid({ site, collections, showAdminLink }: Props) {
   return (
     <div className="mx-auto flex w-full max-w-5xl flex-1 flex-col gap-10 px-4 py-12 sm:px-6 sm:py-16">
       <header className="space-y-3 text-center sm:text-left">
@@ -20,7 +21,18 @@ export function CollectionGrid({ site, collections }: Props) {
             </h1>
             <p className="max-w-xl text-lg text-muted">{site.tagline}</p>
           </div>
-          <SignOutButton />
+          <div className="flex items-center gap-2 sm:gap-3">
+            {showAdminLink ? (
+              <Link
+                href="/admin"
+                prefetch={false}
+                className="rounded-lg border border-accent/40 bg-accent/10 px-3 py-1.5 text-sm font-medium text-accent"
+              >
+                Admin
+              </Link>
+            ) : null}
+            <SignOutButton />
+          </div>
         </div>
       </header>
 

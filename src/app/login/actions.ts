@@ -74,13 +74,25 @@ export async function signupAction(formData: FormData) {
   }
 
   const admin = createAdminClient();
-  const { data: invite } = await admin
-    .from("invites")
-    .select("*")
-    .eq("token", token)
-    .is("used_at", null)
-    .gt("expires_at", new Date().toISOString())
-    .maybeSingle();
+  let invite;
+  try {
+    const { data, error: inviteError } = await admin
+      .from("invites")
+      .select("*")
+      .eq("token", token)
+      .is("used_at", null)
+      .gt("expires_at", new Date().toISOString())
+      .maybeSingle();
+
+    if (inviteError) {
+      console.error("Invite lookup failed:", inviteError.message);
+      redirect(`/signup?invite=${token}&error=service`);
+    }
+    invite = data;
+  } catch (error) {
+    console.error("Invite lookup failed:", error);
+    redirect(`/signup?invite=${token}&error=service`);
+  }
 
   if (!invite) {
     redirect(`/signup?invite=${token}&error=invite`);
@@ -123,7 +135,16 @@ export async function signupAction(formData: FormData) {
     .eq("id", invite.id);
 
   const supabase = await createClient();
-  await supabase.auth.signInWithPassword({ email, password });
+  const { error: signInError } = await supabase.auth.signInWithPassword({
+    email,
+    password,
+  });
+
+  if (signInError) {
+    console.error("Post-signup sign-in failed:", signInError.message);
+    redirect("/login?from=/");
+  }
+
   redirect("/");
 }
 
