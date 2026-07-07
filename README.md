@@ -18,7 +18,7 @@ A private learning portal: invite-only signup, video lessons (YouTube / Loom), w
 ```bash
 cp .env.example .env.local
 # Fill in NEXT_PUBLIC_SUPABASE_URL, NEXT_PUBLIC_SUPABASE_ANON_KEY, SUPABASE_SERVICE_ROLE_KEY
-# Set ADMIN_EMAIL to your email for admin access on signup
+# Set ADMIN_EMAIL (comma-separated for multiple admins) for admin access on signup/login
 # Optional: LOOM_API_KEY for admin Loom video picker
 ```
 
@@ -62,3 +62,5 @@ npx vercel
 ```
 
 Set all env vars in the Vercel dashboard. Run the migration SQL on your Supabase project.
+
+For onboarding a second admin (e.g. Veer), see [`docs/VEER_ADMIN_SETUP.md`](docs/VEER_ADMIN_SETUP.md).

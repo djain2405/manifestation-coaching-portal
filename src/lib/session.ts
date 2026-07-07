@@ -1,6 +1,7 @@
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
+import { isConfiguredAdminEmail } from "@/lib/admin-emails";
 import { isSupabaseConfigured } from "@/lib/supabase/config";
 import {
   isAuthenticated as legacyIsAuthenticated,
@@ -36,9 +37,7 @@ async function promoteAdminIfConfiguredEmail(
 ): Promise<UserProfile | null> {
   if (profile?.role === "admin") return profile;
 
-  const adminEmail = process.env.ADMIN_EMAIL?.toLowerCase();
-  const email = user.email?.toLowerCase();
-  if (!adminEmail || !email || email !== adminEmail) return profile;
+  if (!isConfiguredAdminEmail(user.email)) return profile;
 
   const admin = createAdminClient();
   const { data, error } = await admin

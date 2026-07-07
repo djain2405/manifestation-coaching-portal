@@ -3,6 +3,7 @@
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
+import { isConfiguredAdminEmail } from "@/lib/admin-emails";
 import { isSupabaseConfigured } from "@/lib/supabase/config";
 import {
   getPortalPassword,
@@ -113,8 +114,7 @@ export async function signupAction(formData: FormData) {
     redirect(`/signup?invite=${token}&error=signup`);
   }
 
-  const adminEmail = process.env.ADMIN_EMAIL?.toLowerCase();
-  if (adminEmail && email.toLowerCase() === adminEmail) {
+  if (isConfiguredAdminEmail(email)) {
     const { error: roleError } = await admin
       .from("profiles")
       .update({ role: "admin", full_name: fullName })
