@@ -3,6 +3,7 @@ import { checkAuthenticated } from "@/lib/session";
 import { signupAction } from "@/app/login/actions";
 import { getCurriculum } from "@/lib/curriculum";
 import { isSupabaseConfigured } from "@/lib/supabase/config";
+import { createAdminClient } from "@/lib/supabase/admin";
 
 export const dynamic = "force-dynamic";
 
@@ -12,7 +13,8 @@ type Props = {
 
 const ERROR_MESSAGES: Record<string, string> = {
   invalid: "Please fill in all fields and make sure your passwords match.",
-  invite: "This invite link is invalid or has expired. Ask the host for a new one.",
+  invite:
+    "This invite link is invalid, revoked, or has expired. Ask the host for a new one locked to your email.",
   email: "This invite is for a different email address.",
   signup: "We couldn’t create your account. The email may already be in use.",
   service:
@@ -35,9 +37,45 @@ export default async function SignupPage({ searchParams }: Props) {
     redirect("/");
   }
 
+  const admin = createAdminClient();
+  const { data: invite, error: inviteLookupError } = await admin
+    .from("invites")
+    .select("email, expires_at, used_at, revoked_at")
+    .eq("token", token)
+    .maybeSingle();
+
+  const inviteEmail = invite?.email?.trim().toLowerCase() ?? "";
+  const inviteUsable =
+    Boolean(invite) &&
+    !inviteLookupError &&
+    !invite?.used_at &&
+    !invite?.revoked_at &&
+    Boolean(inviteEmail) &&
+    new Date(invite!.expires_at).getTime() > Date.now();
+
   const { site } = await getCurriculum();
   const errorKey = params.error;
-  const errorMessage = errorKey ? ERROR_MESSAGES[errorKey] : null;
+  const errorMessage = errorKey
+    ? ERROR_MESSAGES[errorKey]
+    : !inviteUsable
+      ? ERROR_MESSAGES.invite
+      : null;
+
+  if (!inviteUsable) {
+    return (
+      <div className="flex min-h-full flex-1 flex-col items-center justify-center px-4 py-16">
+        <div className="w-full max-w-md space-y-6 text-center">
+          <h1 className="font-display text-4xl text-foreground">Invite unavailable</h1>
+          <p className="text-lg text-muted" role="alert">
+            {ERROR_MESSAGES.invite}
+          </p>
+          <a href="/login" className="font-medium text-accent underline">
+            Sign in
+          </a>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="flex min-h-full flex-1 flex-col items-center justify-center px-4 py-16">
@@ -82,10 +120,14 @@ export default async function SignupPage({ searchParams }: Props) {
               id="email"
               name="email"
               type="email"
+              defaultValue={inviteEmail}
+              readOnly
               autoComplete="email"
-              required
-              className="w-full min-h-12 rounded-xl border border-border bg-background px-4 py-3.5 text-base focus:border-accent focus:outline-none focus:ring-2 focus:ring-accent/30"
+              className="w-full min-h-12 cursor-not-allowed rounded-xl border border-border bg-surface/80 px-4 py-3.5 text-base text-muted"
             />
+            <p className="text-sm text-muted">
+              This invite is locked to this email address.
+            </p>
           </div>
 
           <div className="space-y-2">

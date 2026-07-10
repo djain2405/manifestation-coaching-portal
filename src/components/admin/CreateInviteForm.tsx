@@ -7,14 +7,19 @@ import { CopyInviteLink } from "./CopyInviteLink";
 export function CreateInviteForm() {
   const [token, setToken] = useState<string | null>(null);
   const [pending, setPending] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     setPending(true);
+    setError(null);
     const fd = new FormData(e.currentTarget);
     try {
       const t = await createInviteAction(fd);
       setToken(t);
+      e.currentTarget.reset();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Could not create invite.");
     } finally {
       setPending(false);
     }
@@ -24,33 +29,48 @@ export function CreateInviteForm() {
     <div className="space-y-4">
       <form
         onSubmit={handleSubmit}
-        className="flex flex-wrap gap-3 rounded-2xl border border-border bg-white p-6"
+        className="space-y-3 rounded-2xl border border-border bg-white p-6"
       >
-        <input
-          name="email"
-          type="email"
-          placeholder="Lock to email (optional)"
-          className="min-h-12 flex-1 rounded-xl border border-border px-4"
-        />
-        <input
-          name="days"
-          type="number"
-          defaultValue={7}
-          min={1}
-          max={90}
-          className="min-h-12 w-24 rounded-xl border border-border px-4"
-        />
-        <button
-          type="submit"
-          disabled={pending}
-          className="min-h-12 rounded-lg bg-accent px-6 font-semibold text-accent-foreground disabled:opacity-50"
-        >
-          {pending ? "Creating…" : "Create invite"}
-        </button>
+        <div className="flex flex-wrap gap-3">
+          <input
+            name="email"
+            type="email"
+            required
+            placeholder="Client email"
+            className="min-h-12 flex-1 rounded-xl border border-border px-4"
+          />
+          <input
+            name="days"
+            type="number"
+            defaultValue={7}
+            min={1}
+            max={90}
+            aria-label="Days until invite expires"
+            className="min-h-12 w-24 rounded-xl border border-border px-4"
+          />
+          <button
+            type="submit"
+            disabled={pending}
+            className="min-h-12 rounded-lg bg-accent px-6 font-semibold text-accent-foreground disabled:opacity-50"
+          >
+            {pending ? "Creating…" : "Create invite"}
+          </button>
+        </div>
+        <p className="text-sm text-muted">
+          Only this email can use the invite link. Days = how long the link stays
+          open (1–90).
+        </p>
+        {error ? (
+          <p className="text-sm text-red-500" role="alert">
+            {error}
+          </p>
+        ) : null}
       </form>
       {token ? (
         <div className="rounded-xl border border-accent/30 bg-accent/5 p-4">
-          <p className="mb-2 text-sm text-muted">New invite created — copy and send:</p>
+          <p className="mb-2 text-sm text-muted">
+            New invite created — copy and send only to that client:
+          </p>
           <CopyInviteLink token={token} />
         </div>
       ) : null}

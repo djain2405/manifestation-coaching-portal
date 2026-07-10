@@ -37,10 +37,21 @@ async function uniqueCollectionSlug(
   return uniqueSlug(base, taken);
 }
 
+function isValidEmail(email: string): boolean {
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+}
+
 export async function createInviteAction(formData: FormData) {
   await requireAdmin();
-  const email = String(formData.get("email") ?? "").trim() || null;
-  const days = Number(formData.get("days") ?? 7) || 7;
+  const email = String(formData.get("email") ?? "").trim().toLowerCase();
+  if (!email || !isValidEmail(email)) {
+    throw new Error("A valid client email is required for every invite.");
+  }
+
+  const rawDays = Number(formData.get("days") ?? 7);
+  const days = Number.isFinite(rawDays)
+    ? Math.min(90, Math.max(1, Math.floor(rawDays)))
+    : 7;
 
   const admin = createAdminClient();
   const token = randomBytes(24).toString("hex");
@@ -62,6 +73,29 @@ export async function createInviteAction(formData: FormData) {
   if (error) throw new Error(error.message);
   revalidatePath("/admin/invites");
   return token;
+}
+
+export async function revokeInviteAction(formData: FormData) {
+  await requireAdmin();
+  const id = String(formData.get("id") ?? "").trim();
+  if (!id) throw new Error("Invite id is required.");
+
+  const admin = createAdminClient();
+  const { error } = await admin
+    .from("invites")
+    .update({ revoked_at: new Date().toISOString() })
+    .eq("id", id)
+    .is("used_at", null);
+
+  if (error) {
+    if (error.message.includes("revoked_at")) {
+      throw new Error(
+        "Run migration 002_invite_revoke.sql in Supabase before revoking invites.",
+      );
+    }
+    throw new Error(error.message);
+  }
+  revalidatePath("/admin/invites");
 }
 
 export async function updateSiteSettingsAction(formData: FormData) {

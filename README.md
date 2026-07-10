@@ -45,7 +45,7 @@ npm run dev
 
 | Feature | Description |
 |---------|-------------|
-| **Invite signup** | `/signup?invite=token` — email + password |
+| **Invite signup** | `/signup?invite=token` — email-locked invite + password |
 | **Progress** | Saved per user in Supabase (syncs across devices) |
 | **Worksheets** | Type notes in-browser or download PDF |
 | **Admin** | Reorder lessons (drag-and-drop), add Loom/YouTube videos, invites |

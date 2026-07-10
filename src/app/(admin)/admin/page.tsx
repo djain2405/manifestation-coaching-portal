@@ -11,7 +11,18 @@ export default async function AdminDashboard() {
   const { count: inviteCount } = await supabase
     .from("invites")
     .select("*", { count: "exact", head: true })
-    .is("used_at", null);
+    .is("used_at", null)
+    .gt("expires_at", new Date().toISOString());
+
+  // Prefer excluding revoked when the column exists (post-migration).
+  const { count: openInviteCount, error: openInviteError } = await supabase
+    .from("invites")
+    .select("*", { count: "exact", head: true })
+    .is("used_at", null)
+    .is("revoked_at", null)
+    .gt("expires_at", new Date().toISOString());
+
+  const openInvites = openInviteError ? inviteCount : openInviteCount;
 
   return (
     <div className="space-y-8">
@@ -27,7 +38,7 @@ export default async function AdminDashboard() {
         </div>
         <div className="rounded-2xl border border-border bg-white p-6">
           <p className="text-sm text-muted">Open invites</p>
-          <p className="font-display text-3xl text-foreground">{inviteCount ?? 0}</p>
+          <p className="font-display text-3xl text-foreground">{openInvites ?? 0}</p>
         </div>
         <div className="rounded-2xl border border-border bg-white p-6">
           <p className="text-sm text-muted">Lessons total</p>

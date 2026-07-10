@@ -28,9 +28,9 @@ Veer’s signup email: **manifest.miracles.veer@gmail.com**
 ### Step B — Create an invite for Veer
 
 1. Sign in as admin → **Admin** (top right) → **Invites**
-2. In **Lock to email**, enter Veer’s email (recommended so only he can use the link)
+2. Enter Veer’s email in **Client email** (required — only that address can join)
 3. Set expiry (e.g. 30 days) → **Create invite**
-4. Copy the invite link and send it to Veer (email or Slack)
+4. Copy the invite link and send it only to Veer
 
 ### Step C — If Veer already signed up as a learner
 
@@ -62,7 +62,7 @@ https://manifestation-coaching-portal.vercel.app/signup?invite=...
 
 ### 2. Sign up
 
-- Use the **same email** Divya used for the invite (if the link was locked to your email)
+- The form shows your email **locked** (you cannot change it)
 - Choose a password (at least 8 characters)
 - Confirm password must match
 
@@ -84,12 +84,29 @@ If it still doesn’t appear, contact Divya — your email may not be on the adm
 | Area | Path | Purpose |
 |------|------|---------|
 | **Series** | Admin → Series | Edit modules, add videos & worksheets, upload PDFs |
-| **Invites** | Admin → Invites | Create signup links for new learners |
+| **Invites** | Admin → Invites | Create email-locked signup links for new learners |
 | **Settings** | Admin → Settings | Portal title, tagline, labels |
 
 **Learner view:** Click the site title or a module name to browse content as students see it.
 
-### 5. Day-to-day login
+### 5. Inviting learners (secure process)
+
+Every invite **must** include the client’s email. Forwarding the link to someone else does **not** let them create an account with a different email.
+
+1. Admin → **Invites**
+2. Enter the **client’s exact email** (required)
+3. Set how many days the link stays open (1–90)
+4. **Create invite** → **Copy signup link**
+5. Send that link only to that client
+
+If a link leaks or you sent it to the wrong person:
+
+- Click **Revoke** on that invite
+- Create a new invite for the correct email
+
+**Important:** This stops *other people from signing up with the forwarded link*. It does **not** stop a client from sharing their password after they join. Suspending members is a separate future control.
+
+### 6. Day-to-day login
 
 Bookmark:
 
@@ -97,13 +114,13 @@ https://manifestation-coaching-portal.vercel.app/login
 
 Use your email + password. No invite needed after the first signup.
 
-### 6. Adding videos
+### 7. Adding videos
 
 1. Admin → **Series** → open a module
 2. Edit a watch item or add a new one
 3. Paste a **YouTube** link (or Loom URL) — the embed is created automatically
 
-### 7. Adding worksheet PDFs
+### 8. Adding worksheet PDFs
 
 1. Admin → **Series** → open the worksheet item → **Edit**
 2. Upload a PDF (max 10 MB)
@@ -123,11 +140,24 @@ Use your email + password. No invite needed after the first signup.
 
 ---
 
+## Database migration (one-time after deploy)
+
+In Supabase → **SQL Editor**, run:
+
+[`supabase/migrations/002_invite_revoke.sql`](../supabase/migrations/002_invite_revoke.sql)
+
+```sql
+alter table public.invites
+  add column if not exists revoked_at timestamptz;
+```
+
+---
+
 ## Troubleshooting
 
 | Problem | Fix |
 |---------|-----|
-| “Invalid or expired invite” | Ask Divya for a new invite from Admin → Invites |
-| “Invite is for a different email” | Sign up with the email the invite was locked to |
+| “Invalid, revoked, or expired invite” | Create a new email-locked invite; revoke the old one if needed |
+| Legacy open invite (no email) | Those no longer work — recreate with the client’s email |
 | No **Admin** link after login | Sign out/in; confirm your email is in `ADMIN_EMAIL` on Vercel |
 | Forgot password | Supabase must have email reset configured; contact Divya for a reset from Supabase Auth → Users |

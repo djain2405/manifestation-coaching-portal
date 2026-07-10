@@ -170,8 +170,22 @@ async function main() {
   const expires = new Date();
   expires.setDate(expires.getDate() + 30);
 
+  const bootstrapEmail =
+    (process.env.ADMIN_EMAIL ?? "")
+      .split(",")
+      .map((e) => e.trim().toLowerCase())
+      .find(Boolean) || null;
+
+  if (!bootstrapEmail) {
+    console.error(
+      "\nSet ADMIN_EMAIL in .env.local to create a bootstrap invite (email-locked).",
+    );
+    process.exit(1);
+  }
+
   const { error: inviteError } = await supabase.from("invites").insert({
     token,
+    email: bootstrapEmail,
     expires_at: expires.toISOString(),
   });
 
@@ -183,7 +197,7 @@ async function main() {
     process.exit(1);
   }
 
-  console.log("\nBootstrap invite link (share with first user):");
+  console.log("\nBootstrap invite link (for", bootstrapEmail + "):");
   console.log(`  /signup?invite=${token}`);
   console.log("\nDone.");
 }

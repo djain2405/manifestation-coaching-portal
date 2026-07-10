@@ -66,11 +66,10 @@ export async function logoutAction() {
 export async function signupAction(formData: FormData) {
   const token = String(formData.get("invite") ?? "");
   const fullName = String(formData.get("fullName") ?? "").trim();
-  const email = String(formData.get("email") ?? "").trim();
   const password = String(formData.get("password") ?? "");
   const confirm = String(formData.get("confirmPassword") ?? "");
 
-  if (!token || !email || !password || password !== confirm) {
+  if (!token || !password || password !== confirm) {
     redirect(`/signup?invite=${token}&error=invalid`);
   }
 
@@ -95,12 +94,14 @@ export async function signupAction(formData: FormData) {
     redirect(`/signup?invite=${token}&error=service`);
   }
 
-  if (!invite) {
+  if (!invite || invite.revoked_at) {
     redirect(`/signup?invite=${token}&error=invite`);
   }
 
-  if (invite.email && invite.email.toLowerCase() !== email.toLowerCase()) {
-    redirect(`/signup?invite=${token}&error=email`);
+  // Person-bound invites only — reject legacy open invites and trust invite.email
+  const email = invite.email?.trim().toLowerCase() ?? "";
+  if (!email) {
+    redirect(`/signup?invite=${token}&error=invite`);
   }
 
   const { data: authData, error: signUpError } = await admin.auth.admin.createUser({
