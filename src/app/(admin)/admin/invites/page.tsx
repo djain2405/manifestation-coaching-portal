@@ -32,6 +32,12 @@ export default async function AdminInvitesPage() {
 
       <CreateInviteForm />
 
+      <p className="text-sm text-muted">
+        Used, expired, and revoked invites stay in this list for history. Only{" "}
+        <span className="font-medium text-foreground">Open</span> invites can
+        still be copied or revoked.
+      </p>
+
       <ul className="space-y-3">
         {(invites ?? []).map((inv) => {
           const revoked = Boolean(inv.revoked_at);

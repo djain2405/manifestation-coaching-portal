@@ -88,10 +88,20 @@ export async function revokeInviteAction(formData: FormData) {
     .is("used_at", null);
 
   if (error) {
-    if (error.message.includes("revoked_at")) {
-      throw new Error(
-        "Run migration 002_invite_revoke.sql in Supabase before revoking invites.",
-      );
+    // Fallback if migration 002 has not been applied yet: expire the invite now.
+    if (
+      error.message.includes("revoked_at") ||
+      error.code === "42703" ||
+      error.message.includes("column")
+    ) {
+      const { error: expireError } = await admin
+        .from("invites")
+        .update({ expires_at: new Date().toISOString() })
+        .eq("id", id)
+        .is("used_at", null);
+      if (expireError) throw new Error(expireError.message);
+      revalidatePath("/admin/invites");
+      return;
     }
     throw new Error(error.message);
   }
