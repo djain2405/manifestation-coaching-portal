@@ -84,10 +84,13 @@ If it still doesn’t appear, contact Divya — your email may not be on the adm
 | Area | Path | Purpose |
 |------|------|---------|
 | **Series** | Admin → Series | Edit modules, add videos & worksheets, upload PDFs |
+| **Members** | Admin → Members | See who has access, role, last sign-in, lesson progress |
 | **Invites** | Admin → Invites | Create email-locked signup links for new learners |
 | **Settings** | Admin → Settings | Portal title, tagline, labels |
 
 **Learner view:** Click the site title or a module name to browse content as students see it.
+
+**Members** is visibility only (who joined and how far they got). It does **not** suspend or remove accounts yet — revoke unused invites from **Invites**, or manage users in Supabase Auth if you need to disable someone manually.
 
 ### 5. Inviting learners (secure process)
 
