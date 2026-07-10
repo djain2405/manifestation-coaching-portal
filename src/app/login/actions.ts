@@ -45,6 +45,10 @@ export async function loginAction(formData: FormData) {
   const { error } = await supabase.auth.signInWithPassword({ email, password });
 
   if (error) {
+    const message = error.message.toLowerCase();
+    if (message.includes("ban") || message.includes("suspend")) {
+      redirect(`/login?error=suspended&from=${encodeURIComponent(redirectTo)}`);
+    }
     redirect(`/login?error=invalid&from=${encodeURIComponent(redirectTo)}`);
   }
 

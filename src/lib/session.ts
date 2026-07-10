@@ -28,6 +28,18 @@ export async function getSessionUser() {
   const {
     data: { user },
   } = await supabase.auth.getUser();
+
+  if (!user) return null;
+
+  const bannedUntil = user.banned_until;
+  if (bannedUntil) {
+    const until = new Date(bannedUntil).getTime();
+    if (Number.isFinite(until) && until > Date.now()) {
+      await supabase.auth.signOut();
+      return null;
+    }
+  }
+
   return user;
 }
 

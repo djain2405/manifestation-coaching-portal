@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { requireAdmin } from "@/lib/session";
 import { listMembers } from "@/lib/members";
+import { MemberAccessButtons } from "@/components/admin/MemberAccessButtons";
 
 function formatDate(value: string | null): string {
   if (!value) return "Never";
@@ -22,8 +23,8 @@ export default async function AdminMembersPage() {
           <h1 className="font-display text-3xl text-foreground">Members</h1>
           <p className="text-muted">
             Who has portal access. {members.length} member
-            {members.length === 1 ? "" : "s"}. Visibility only — suspend/remove
-            is not available yet.
+            {members.length === 1 ? "" : "s"}. Suspend a learner to cut off
+            login; Restore brings them back. Progress is kept.
           </p>
         </div>
         <Link href="/admin" className="text-accent underline">
@@ -48,7 +49,7 @@ export default async function AdminMembersPage() {
               key={member.id}
               className="flex flex-wrap items-start justify-between gap-4 rounded-2xl border border-border bg-white p-4 sm:p-5"
             >
-              <div className="min-w-0 space-y-1">
+              <div className="min-w-0 flex-1 space-y-1">
                 <div className="flex flex-wrap items-center gap-2">
                   <p className="font-medium text-foreground">{member.fullName}</p>
                   <span
@@ -59,6 +60,15 @@ export default async function AdminMembersPage() {
                     }
                   >
                     {member.role}
+                  </span>
+                  <span
+                    className={
+                      member.status === "suspended"
+                        ? "rounded-md border border-red-300/60 bg-red-50 px-2 py-0.5 text-xs font-medium text-red-700"
+                        : "rounded-md border border-green-600/30 bg-green-50 px-2 py-0.5 text-xs font-medium text-green-700"
+                    }
+                  >
+                    {member.status === "suspended" ? "Suspended" : "Active"}
                   </span>
                 </div>
                 <p className="truncate text-sm text-muted">{member.email}</p>
@@ -87,6 +97,13 @@ export default async function AdminMembersPage() {
                   ) : null}
                 </div>
               </div>
+
+              <MemberAccessButtons
+                memberId={member.id}
+                memberName={member.fullName}
+                status={member.status}
+                canManage={member.role !== "admin"}
+              />
             </li>
           ))}
         </ul>

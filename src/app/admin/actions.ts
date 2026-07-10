@@ -108,6 +108,56 @@ export async function revokeInviteAction(formData: FormData) {
   revalidatePath("/admin/invites");
 }
 
+async function assertCanChangeMemberAccess(targetUserId: string) {
+  const actor = await requireAdmin();
+  if (actor.id === targetUserId) {
+    throw new Error("You cannot change access for your own account.");
+  }
+
+  const admin = createAdminClient();
+  const { data: profile, error } = await admin
+    .from("profiles")
+    .select("id, role")
+    .eq("id", targetUserId)
+    .maybeSingle();
+
+  if (error) throw new Error(error.message);
+  if (!profile) throw new Error("Member not found.");
+  if (profile.role === "admin") {
+    throw new Error("Admin accounts cannot be suspended from this screen.");
+  }
+
+  return admin;
+}
+
+export async function suspendMemberAction(formData: FormData) {
+  const id = String(formData.get("id") ?? "").trim();
+  if (!id) throw new Error("Member id is required.");
+
+  const admin = await assertCanChangeMemberAccess(id);
+  const { error } = await admin.auth.admin.updateUserById(id, {
+    ban_duration: "876000h",
+  });
+  if (error) throw new Error(error.message);
+
+  revalidatePath("/admin/members");
+  revalidatePath("/admin");
+}
+
+export async function restoreMemberAction(formData: FormData) {
+  const id = String(formData.get("id") ?? "").trim();
+  if (!id) throw new Error("Member id is required.");
+
+  const admin = await assertCanChangeMemberAccess(id);
+  const { error } = await admin.auth.admin.updateUserById(id, {
+    ban_duration: "none",
+  });
+  if (error) throw new Error(error.message);
+
+  revalidatePath("/admin/members");
+  revalidatePath("/admin");
+}
+
 export async function updateSiteSettingsAction(formData: FormData) {
   await requireAdmin();
   const supabase = await createClient();

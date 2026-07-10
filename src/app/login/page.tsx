@@ -32,6 +32,7 @@ export default async function LoginPage({ searchParams }: Props) {
   const { site } = await getCurriculum();
   const redirectTo = safeFrom(params.from);
   const showError = params.error === "invalid";
+  const showSuspended = params.error === "suspended";
   const resetSent = params.reset === "sent";
   const useEmail = isSupabaseConfigured();
 
@@ -92,6 +93,13 @@ export default async function LoginPage({ searchParams }: Props) {
               {useEmail
                 ? "That email or password didn’t work. Please try again."
                 : "That key didn’t work — try again."}
+            </p>
+          ) : null}
+
+          {showSuspended ? (
+            <p className="text-center text-base text-red-500" role="alert">
+              This account has been suspended. Contact the host if you need
+              access restored.
             </p>
           ) : null}
 

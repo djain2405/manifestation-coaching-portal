@@ -1,15 +1,24 @@
 import { createAdminClient } from "@/lib/supabase/admin";
 
+export type MemberStatus = "active" | "suspended";
+
 export type MemberRow = {
   id: string;
   fullName: string;
   email: string;
   role: "admin" | "viewer";
+  status: MemberStatus;
   joinedAt: string;
   lastSignInAt: string | null;
   completedCount: number;
   lastActiveAt: string | null;
 };
+
+function isSuspended(bannedUntil: string | undefined): boolean {
+  if (!bannedUntil) return false;
+  const until = new Date(bannedUntil).getTime();
+  return Number.isFinite(until) && until > Date.now();
+}
 
 type ProgressAgg = {
   completedCount: number;
@@ -90,6 +99,7 @@ export async function listMembers(): Promise<MemberRow[]> {
       ),
       email: email || "—",
       role: profile.role === "admin" ? "admin" : "viewer",
+      status: isSuspended(authUser?.banned_until) ? "suspended" : "active",
       joinedAt: profile.created_at,
       lastSignInAt: authUser?.last_sign_in_at ?? null,
       completedCount: progress?.completedCount ?? 0,

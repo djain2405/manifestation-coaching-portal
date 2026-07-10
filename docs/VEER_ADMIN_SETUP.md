@@ -84,13 +84,25 @@ If it still doesn’t appear, contact Divya — your email may not be on the adm
 | Area | Path | Purpose |
 |------|------|---------|
 | **Series** | Admin → Series | Edit modules, add videos & worksheets, upload PDFs |
-| **Members** | Admin → Members | See who has access, role, last sign-in, lesson progress |
+| **Members** | Admin → Members | See who has access; Suspend / Restore learners |
 | **Invites** | Admin → Invites | Create email-locked signup links for new learners |
 | **Settings** | Admin → Settings | Portal title, tagline, labels |
 
 **Learner view:** Click the site title or a module name to browse content as students see it.
 
-**Members** is visibility only (who joined and how far they got). It does **not** suspend or remove accounts yet — revoke unused invites from **Invites**, or manage users in Supabase Auth if you need to disable someone manually.
+### Members — Suspend / Restore
+
+1. Admin → **Members**
+2. Find the learner → **Suspend** (confirm)
+3. They cannot sign in until you click **Restore**
+4. Progress and notes are kept while suspended
+
+Rules:
+
+- You cannot suspend your own account
+- Admin accounts cannot be suspended from this screen
+- Suspend does **not** stop password sharing while the account is still Active — use Suspend when you need to cut off access
+- Revoke unused invites separately under **Invites**
 
 ### 5. Inviting learners (secure process)
 
@@ -107,7 +119,7 @@ If a link leaks or you sent it to the wrong person:
 - Click **Revoke** on that invite
 - Create a new invite for the correct email
 
-**Important:** This stops *other people from signing up with the forwarded link*. It does **not** stop a client from sharing their password after they join. Suspending members is a separate future control.
+**Important:** This stops *other people from signing up with the forwarded link*. It does **not** stop a client from sharing their password after they join. If that happens, **Suspend** them under Admin → Members.
 
 ### 6. Day-to-day login
 
