@@ -1,23 +1,27 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { createInviteAction } from "@/app/admin/actions";
 import { CopyInviteLink } from "./CopyInviteLink";
 
 export function CreateInviteForm() {
+  const router = useRouter();
   const [token, setToken] = useState<string | null>(null);
   const [pending, setPending] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
+    const form = e.currentTarget;
     setPending(true);
     setError(null);
-    const fd = new FormData(e.currentTarget);
+    const fd = new FormData(form);
     try {
       const t = await createInviteAction(fd);
       setToken(t);
-      e.currentTarget.reset();
+      form.reset();
+      router.refresh();
     } catch (err) {
       setError(err instanceof Error ? err.message : "Could not create invite.");
     } finally {
