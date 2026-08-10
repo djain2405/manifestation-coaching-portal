@@ -68,7 +68,11 @@ export default async function AdminSeriesDetailPage({ params }: Props) {
           />
         </label>
         <label className="flex items-center gap-2">
-          <input type="checkbox" name="published" defaultChecked />
+          <input
+            type="checkbox"
+            name="published"
+            defaultChecked={collection.published === true}
+          />
           <span className="text-sm">Published (visible to learners)</span>
         </label>
         <button

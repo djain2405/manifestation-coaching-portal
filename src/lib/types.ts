@@ -93,6 +93,8 @@ export type Collection = {
   items: Item[];
   accent?: string;
   cover?: CollectionCover;
+  /** When false, hidden from learners. Admin list may include drafts. */
+  published?: boolean;
 };
 
 /** @deprecated Use Collection */

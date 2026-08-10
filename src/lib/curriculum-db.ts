@@ -135,6 +135,7 @@ function mapDbCollection(row: DbCollection): Collection {
     cover: row.cover_gradient
       ? { gradient: row.cover_gradient }
       : undefined,
+    published: row.published,
     items,
   };
 }

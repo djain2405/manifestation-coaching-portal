@@ -56,7 +56,7 @@ export function EditItemForm({ item, collectionId, onCancel }: Props) {
           name="url"
           type="url"
           defaultValue={item.embed ? embedToPasteUrl(item.embed) : ""}
-          placeholder="YouTube or Loom URL"
+          placeholder="Vimeo, YouTube, or Loom URL"
           required
           className="w-full min-h-10 rounded-lg border border-border px-3 text-sm"
         />

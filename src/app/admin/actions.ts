@@ -184,6 +184,10 @@ export async function createCollectionAction(formData: FormData) {
   const title = String(formData.get("title") ?? "").trim();
   const slug = await uniqueCollectionSlug(supabase, title);
 
+  const { count } = await supabase
+    .from("collections")
+    .select("*", { count: "exact", head: true });
+
   const { data, error } = await supabase
     .from("collections")
     .insert({
@@ -191,12 +195,14 @@ export async function createCollectionAction(formData: FormData) {
       slug,
       description: "",
       published: false,
+      sort_order: count ?? 0,
     })
     .select("id")
     .single();
 
   if (error) throw new Error(error.message);
   revalidatePath("/admin/series");
+  revalidatePath("/");
   redirect(`/admin/series/${data.id}`);
 }
 
@@ -257,6 +263,21 @@ export async function reorderItemsAction(
   }
 
   revalidatePath(`/admin/series/${collectionId}`);
+}
+
+export async function reorderCollectionsAction(orderedCollectionIds: string[]) {
+  await requireAdmin();
+  const supabase = await createClient();
+
+  for (let i = 0; i < orderedCollectionIds.length; i++) {
+    await supabase
+      .from("collections")
+      .update({ sort_order: i, updated_at: new Date().toISOString() })
+      .eq("id", orderedCollectionIds[i]);
+  }
+
+  revalidatePath("/admin/series");
+  revalidatePath("/");
 }
 
 export async function createWatchItemAction(

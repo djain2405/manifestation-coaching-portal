@@ -94,7 +94,7 @@ export function AddItemPanel({ collectionId }: Props) {
           />
           <input
             name="url"
-            placeholder="Loom or YouTube URL"
+            placeholder="Vimeo, YouTube, or Loom URL"
             required
             className="w-full min-h-12 rounded-xl border border-border px-4"
           />
