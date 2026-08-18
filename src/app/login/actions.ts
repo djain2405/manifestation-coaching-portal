@@ -13,6 +13,7 @@ import {
 } from "@/lib/auth";
 import { cookies } from "next/headers";
 import { DEFAULT_COURSE_PATH } from "@/lib/constants";
+import { getSiteUrl } from "@/lib/site-url";
 
 function safeRedirectPath(from: FormDataEntryValue | null): string {
   if (typeof from === "string" && from.startsWith("/") && !from.startsWith("//")) {
@@ -160,9 +161,41 @@ export async function resetPasswordAction(formData: FormData) {
   }
 
   const supabase = await createClient();
-  const origin = process.env.NEXT_PUBLIC_SITE_URL ?? "http://127.0.0.1:3000";
-  await supabase.auth.resetPasswordForEmail(email, {
-    redirectTo: `${origin}/login?reset=sent`,
+  const origin = getSiteUrl();
+  const { error } = await supabase.auth.resetPasswordForEmail(email, {
+    redirectTo: `${origin}/auth/callback?next=/reset-password`,
   });
+
+  if (error) {
+    console.error("Password reset email failed:", error.message);
+    redirect("/login?error=reset");
+  }
+
   redirect("/login?reset=sent");
+}
+
+export async function updatePasswordAction(formData: FormData) {
+  const password = String(formData.get("password") ?? "");
+  const confirm = String(formData.get("confirmPassword") ?? "");
+
+  if (!password || password.length < 8 || password !== confirm) {
+    redirect("/reset-password?error=invalid");
+  }
+
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!user) {
+    redirect("/login?error=reset");
+  }
+
+  const { error } = await supabase.auth.updateUser({ password });
+  if (error) {
+    console.error("Password update failed:", error.message);
+    redirect("/reset-password?error=update");
+  }
+
+  redirect("/");
 }

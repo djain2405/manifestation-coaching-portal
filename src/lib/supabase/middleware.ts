@@ -52,15 +52,20 @@ export async function updateSession(request: NextRequest) {
 
   const path = request.nextUrl.pathname;
   const isAuthPage = path === "/login" || path.startsWith("/signup");
+  const isResetPassword = path.startsWith("/reset-password");
+  const isAuthCallback = path.startsWith("/auth/callback");
   const isProtected =
     path === "/" ||
     path.startsWith("/course") ||
     path.startsWith("/admin");
 
-  if (!user && isProtected && !isAuthPage) {
+  if (!user && (isProtected || isResetPassword) && !isAuthPage && !isAuthCallback) {
     const url = request.nextUrl.clone();
     url.pathname = "/login";
     url.searchParams.set("from", path);
+    if (isResetPassword) {
+      url.searchParams.set("error", "reset");
+    }
     return NextResponse.redirect(url);
   }
 

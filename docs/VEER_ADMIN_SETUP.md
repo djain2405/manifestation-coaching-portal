@@ -175,4 +175,4 @@ alter table public.invites
 | “Invalid, revoked, or expired invite” | Create a new email-locked invite; revoke the old one if needed |
 | Legacy open invite (no email) | Those no longer work — recreate with the client’s email |
 | No **Admin** link after login | Sign out/in; confirm your email is in `ADMIN_EMAIL` on Vercel |
-| Forgot password | Supabase must have email reset configured; contact Divya for a reset from Supabase Auth → Users |
+| Forgot password | Use **Forgot your password?** on the login page. The email link opens **Choose a new password**. If you were deleted from Auth, request a new invite instead. |

@@ -33,6 +33,7 @@ export default async function LoginPage({ searchParams }: Props) {
   const redirectTo = safeFrom(params.from);
   const showError = params.error === "invalid";
   const showSuspended = params.error === "suspended";
+  const showResetError = params.error === "reset";
   const resetSent = params.reset === "sent";
   const useEmail = isSupabaseConfigured();
 
@@ -100,6 +101,13 @@ export default async function LoginPage({ searchParams }: Props) {
             <p className="text-center text-base text-red-500" role="alert">
               This account has been suspended. Contact the host if you need
               access restored.
+            </p>
+          ) : null}
+
+          {showResetError ? (
+            <p className="text-center text-base text-red-500" role="alert">
+              That reset link is invalid or expired. Ask the host for a new
+              invite if you don’t have an account yet.
             </p>
           ) : null}
 
