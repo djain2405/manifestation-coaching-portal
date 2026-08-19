@@ -16,7 +16,7 @@ Veer’s signup email: **manifest.miracles.veer@gmail.com**
 2. Edit **Production** `ADMIN_EMAIL` to:
 
    ```
-   divyajain2405@gmail.com,manifest.miracles.veer@gmail.com
+   divyajain2405@gmail.com,manifest.miracles.veer@gmail.com,syroncw03@gmail.com
    ```
 
    (No spaces, or spaces are fine — the app trims them.)
