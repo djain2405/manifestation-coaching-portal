@@ -8,6 +8,7 @@ import { CollectionHome } from "@/components/CollectionHome";
 
 type Props = {
   params: Promise<{ courseSlug: string }>;
+  searchParams: Promise<{ password?: string }>;
 };
 
 export async function generateMetadata({ params }: Props) {
@@ -17,7 +18,7 @@ export async function generateMetadata({ params }: Props) {
   return { title: collection.title };
 }
 
-export default async function CollectionPage({ params }: Props) {
+export default async function CollectionPage({ params, searchParams }: Props) {
   const { courseSlug } = await params;
   const collection = await getCollection(courseSlug);
   if (!collection) notFound();
@@ -26,6 +27,7 @@ export default async function CollectionPage({ params }: Props) {
   const labels = getLabels(site);
   const coverClass = getCoverClassName(collection);
   const admin = await isAdmin();
+  const passwordUpdated = (await searchParams).password === "updated";
 
   return (
     <PortalShell
@@ -38,6 +40,7 @@ export default async function CollectionPage({ params }: Props) {
         collection={collection}
         labels={labels}
         coverClass={coverClass}
+        passwordUpdated={passwordUpdated}
       />
     </PortalShell>
   );

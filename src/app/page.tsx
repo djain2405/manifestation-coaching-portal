@@ -6,7 +6,11 @@ import { CollectionGrid } from "@/components/CollectionGrid";
 
 export const dynamic = "force-dynamic";
 
-export default async function Home() {
+type Props = {
+  searchParams: Promise<{ password?: string }>;
+};
+
+export default async function Home({ searchParams }: Props) {
   if (!(await checkAuthenticated())) {
     redirect("/login");
   }
@@ -14,12 +18,22 @@ export default async function Home() {
   const collections = await getCollections();
   const { site } = await getCurriculum();
   const admin = await isAdmin();
+  const passwordUpdated = (await searchParams).password === "updated";
 
   if (collections.length === 1) {
-    redirect(DEFAULT_COURSE_PATH);
+    redirect(
+      passwordUpdated
+        ? `${DEFAULT_COURSE_PATH}?password=updated`
+        : DEFAULT_COURSE_PATH,
+    );
   }
 
   return (
-    <CollectionGrid site={site} collections={collections} showAdminLink={admin} />
+    <CollectionGrid
+      site={site}
+      collections={collections}
+      showAdminLink={admin}
+      passwordUpdated={passwordUpdated}
+    />
   );
 }

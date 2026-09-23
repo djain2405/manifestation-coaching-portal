@@ -14,6 +14,7 @@ import {
 import { cookies } from "next/headers";
 import { DEFAULT_COURSE_PATH } from "@/lib/constants";
 import { getSiteUrl } from "@/lib/site-url";
+import { getSessionUser } from "@/lib/session";
 
 function safeRedirectPath(from: FormDataEntryValue | null): string {
   if (typeof from === "string" && from.startsWith("/") && !from.startsWith("//")) {
@@ -198,4 +199,31 @@ export async function updatePasswordAction(formData: FormData) {
   }
 
   redirect("/");
+}
+
+export async function changePasswordAction(formData: FormData) {
+  if (!isSupabaseConfigured()) {
+    redirect("/");
+  }
+
+  const password = String(formData.get("password") ?? "");
+  const confirm = String(formData.get("confirmPassword") ?? "");
+
+  const user = await getSessionUser();
+  if (!user || user.id === "legacy") {
+    redirect("/login");
+  }
+
+  if (!password || password.length < 8 || password !== confirm) {
+    redirect("/account?error=invalid");
+  }
+
+  const supabase = await createClient();
+  const { error } = await supabase.auth.updateUser({ password });
+  if (error) {
+    console.error("Password change failed:", error.message);
+    redirect("/account?error=update");
+  }
+
+  redirect("/?password=updated");
 }

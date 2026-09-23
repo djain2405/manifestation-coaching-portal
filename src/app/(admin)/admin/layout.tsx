@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { requireAdmin } from "@/lib/session";
 import { logoutAction } from "@/app/login/actions";
+import { ChangePasswordLink } from "@/components/ChangePasswordLink";
 
 export const dynamic = "force-dynamic";
 
@@ -18,10 +19,11 @@ export default async function AdminLayout({
           <Link href="/admin" className="font-display text-xl text-foreground">
             Manifest Portal Admin
           </Link>
-          <div className="flex items-center gap-3">
+          <div className="flex flex-wrap items-center justify-end gap-3">
             <Link href="/" className="text-sm text-accent underline">
               Learner site
             </Link>
+            <ChangePasswordLink className="whitespace-nowrap rounded-lg border border-border px-4 py-2 text-sm" />
             <form action={logoutAction}>
               <button
                 type="submit"

@@ -13,9 +13,15 @@ type Props = {
   collection: Collection;
   labels: SiteLabels;
   coverClass: string;
+  passwordUpdated?: boolean;
 };
 
-export function CollectionHome({ collection, labels, coverClass }: Props) {
+export function CollectionHome({
+  collection,
+  labels,
+  coverClass,
+  passwordUpdated,
+}: Props) {
   const items = collection.items;
   const { percent, completedCount, continueLessonSlug, continueItem, hydrated, isComplete } =
     useProgress(collection.slug, items);
@@ -53,6 +59,11 @@ export function CollectionHome({ collection, labels, coverClass }: Props) {
 
   return (
     <div className="space-y-12">
+      {passwordUpdated ? (
+        <p className="text-base text-accent" role="status">
+          Your password was updated.
+        </p>
+      ) : null}
       <CollectionHero
         collection={collection}
         labels={labels}

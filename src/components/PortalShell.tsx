@@ -6,6 +6,7 @@ import { getCollectionStyle } from "@/lib/collection-style";
 import { PathNav } from "./PathNav";
 import { MobilePathDrawer } from "./MobilePathDrawer";
 import { SignOutButton } from "./SignOutButton";
+import { ChangePasswordLink } from "./ChangePasswordLink";
 
 type Props = {
   site: Site;
@@ -38,7 +39,7 @@ export function PortalShell({
             >
               {site.title}
             </Link>
-            <div className="flex items-center gap-2 sm:gap-3">
+            <div className="flex min-w-0 flex-wrap items-center justify-end gap-2 sm:gap-3">
               {showAdminLink ? (
                 <Link
                   href="/admin"
@@ -55,6 +56,7 @@ export function PortalShell({
               >
                 {collection.title}
               </Link>
+              <ChangePasswordLink />
               <SignOutButton />
             </div>
           </div>

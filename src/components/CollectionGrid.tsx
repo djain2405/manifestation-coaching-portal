@@ -3,14 +3,21 @@ import Link from "next/link";
 import type { Collection, Site } from "@/lib/types";
 import { getCoverClassName } from "@/lib/collection-style";
 import { SignOutButton } from "./SignOutButton";
+import { ChangePasswordLink } from "./ChangePasswordLink";
 
 type Props = {
   site: Site;
   collections: Collection[];
   showAdminLink?: boolean;
+  passwordUpdated?: boolean;
 };
 
-export function CollectionGrid({ site, collections, showAdminLink }: Props) {
+export function CollectionGrid({
+  site,
+  collections,
+  showAdminLink,
+  passwordUpdated,
+}: Props) {
   return (
     <div className="mx-auto flex w-full max-w-5xl flex-1 flex-col gap-10 px-4 py-12 sm:px-6 sm:py-16">
       <header className="space-y-3 text-center sm:text-left">
@@ -19,9 +26,14 @@ export function CollectionGrid({ site, collections, showAdminLink }: Props) {
             <h1 className="font-display text-4xl text-foreground sm:text-5xl">
               {site.title}
             </h1>
+            {passwordUpdated ? (
+              <p className="text-base text-accent" role="status">
+                Your password was updated.
+              </p>
+            ) : null}
             <p className="max-w-xl text-lg text-muted">{site.tagline}</p>
           </div>
-          <div className="flex items-center gap-2 sm:gap-3">
+          <div className="flex flex-wrap items-center justify-center gap-2 sm:justify-end sm:gap-3">
             {showAdminLink ? (
               <Link
                 href="/admin"
@@ -31,6 +43,7 @@ export function CollectionGrid({ site, collections, showAdminLink }: Props) {
                 Admin
               </Link>
             ) : null}
+            <ChangePasswordLink />
             <SignOutButton />
           </div>
         </div>
