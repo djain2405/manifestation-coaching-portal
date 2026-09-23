@@ -25,6 +25,13 @@ const DEFAULT_LABELS: Required<SiteLabels> = {
   notesAutoSave: "Your notes save automatically.",
   continueLesson: "Continue",
   lessonsFinished: "You've finished {done} of {total} lessons",
+  startHere: "Start here",
+  beginWith: "Begin with {title}",
+  welcomeName: "Welcome, {name}.",
+  welcomeBackName: "Welcome back, {name}.",
+  markedComplete: "Marked complete",
+  worksheetComplete: "Worksheet saved to your path",
+  lessonsCount: "{count} lessons",
 };
 
 export function getLabels(site: Site): Required<SiteLabels> {

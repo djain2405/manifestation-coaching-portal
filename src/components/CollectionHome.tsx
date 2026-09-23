@@ -1,7 +1,5 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import Link from "next/link";
 import type { Collection } from "@/lib/types";
 import type { SiteLabels } from "@/lib/types";
 import { useProgress } from "@/hooks/useProgress";
@@ -13,6 +11,7 @@ type Props = {
   collection: Collection;
   labels: SiteLabels;
   coverClass: string;
+  firstName?: string;
   passwordUpdated?: boolean;
 };
 
@@ -20,6 +19,7 @@ export function CollectionHome({
   collection,
   labels,
   coverClass,
+  firstName,
   passwordUpdated,
 }: Props) {
   const items = collection.items;
@@ -30,24 +30,27 @@ export function CollectionHome({
     ? `/course/${collection.slug}/${continueLessonSlug}`
     : `/course/${collection.slug}/${items[0]?.slug ?? ""}`;
 
-  const continueLabel =
-    continueItem?.title
+  const isFirstRun = hydrated && completedCount === 0;
+  const continueLabel = isFirstRun
+    ? formatLabel(labels.beginWith ?? "Begin with {title}", {
+        title: items[0]?.title ?? "",
+      })
+    : continueItem?.title
       ? `${labels.continueLesson ?? "Continue"}: ${continueItem.title}`
       : (labels.continue ?? "Pick up where you left off");
 
-  const [welcomeLine, setWelcomeLine] = useState<string | null>(null);
-
-  useEffect(() => {
-    const key = `night-school:welcome:${collection.slug}`;
-    const last = sessionStorage.getItem(key);
-    const now = Date.now();
-    if (last && now - Number(last) < 1000 * 60 * 60 * 24 * 7 && continueItem) {
-      setWelcomeLine(
-        `${labels.welcomeBack} — ${labels.continueLesson}: “${continueItem.title}”`,
-      );
-    }
-    sessionStorage.setItem(key, String(now));
-  }, [collection.slug, continueItem, labels.welcomeBack, labels.continueLesson]);
+  const greeting = !hydrated
+    ? null
+    : firstName
+      ? formatLabel(
+          isFirstRun
+            ? (labels.welcomeName ?? "Welcome, {name}.")
+            : (labels.welcomeBackName ?? "Welcome back, {name}."),
+          { name: firstName },
+        )
+      : isFirstRun
+        ? null
+        : (labels.welcomeBack ?? "Welcome back");
 
   const progressSummary = formatLabel(
     labels.lessonsFinished ?? "You've finished {done} of {total} lessons",
@@ -69,12 +72,13 @@ export function CollectionHome({
         labels={labels}
         coverClass={coverClass}
         continueHref={continueHref}
-        continueLabel={continueLabel}
+        continueLabel={hydrated ? continueLabel : (labels.continue ?? "Pick up where you left off")}
         percent={percent}
         completedCount={completedCount}
         hydrated={hydrated}
-        welcomeLine={welcomeLine}
+        greeting={greeting}
         progressSummary={progressSummary}
+        isFirstRun={isFirstRun}
       />
 
       <section>

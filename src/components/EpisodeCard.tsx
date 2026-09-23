@@ -3,7 +3,8 @@
 import Link from "next/link";
 import type { Item } from "@/lib/types";
 import type { SiteLabels } from "@/lib/types";
-import { getItemDuration, isActivityItem } from "@/lib/items";
+import { getItemDuration, isActivityItem, getItemType } from "@/lib/items";
+import { LessonTypeIcon } from "./LessonTypeIcon";
 
 type Props = {
   collectionSlug: string;
@@ -41,8 +42,8 @@ export function EpisodeCard({
         } ${done ? "bg-accent/10" : "bg-surface-elevated"}`}
       >
         <div className="flex items-start justify-between gap-2">
-          <span className="text-2xl" aria-hidden>
-            {item.emoji ?? (isActivity ? "📝" : "◎")}
+          <span className="text-accent" aria-hidden>
+            <LessonTypeIcon type={getItemType(item)} className="h-6 w-6" />
           </span>
           {isActivity ? (
             <span className="rounded-md bg-accent/15 px-2 py-0.5 text-[10px] font-medium uppercase tracking-wide text-accent">

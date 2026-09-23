@@ -4,10 +4,12 @@ import { createClient } from "@/lib/supabase/server";
 import { CreateInviteForm } from "@/components/admin/CreateInviteForm";
 import { CopyInviteLink } from "@/components/admin/CopyInviteLink";
 import { RevokeInviteButton } from "@/components/admin/RevokeInviteButton";
+import { getCurriculum } from "@/lib/curriculum";
 
 export default async function AdminInvitesPage() {
   await requireAdmin();
   const supabase = await createClient();
+  const { site } = await getCurriculum();
 
   const { data: invites } = await supabase
     .from("invites")
@@ -30,7 +32,7 @@ export default async function AdminInvitesPage() {
         </Link>
       </div>
 
-      <CreateInviteForm />
+      <CreateInviteForm site={site} />
 
       <p className="text-sm text-muted">
         Used, expired, and revoked invites stay in this list for history. Only{" "}
@@ -70,7 +72,7 @@ export default async function AdminInvitesPage() {
               </div>
               {open ? (
                 <div className="flex flex-wrap items-center gap-2">
-                  <CopyInviteLink token={inv.token} />
+                  <CopyInviteLink token={inv.token} site={site} />
                   <RevokeInviteButton inviteId={inv.id} />
                 </div>
               ) : null}

@@ -61,6 +61,13 @@ export type SiteLabels = {
   notesAutoSave?: string;
   continueLesson?: string;
   lessonsFinished?: string;
+  startHere?: string;
+  beginWith?: string;
+  welcomeName?: string;
+  welcomeBackName?: string;
+  markedComplete?: string;
+  worksheetComplete?: string;
+  lessonsCount?: string;
 };
 
 export type Site = {
@@ -69,6 +76,10 @@ export type Site = {
   passwordHint: string;
   theme?: string;
   labels?: SiteLabels;
+  coachName?: string;
+  welcomeMessage?: string;
+  coachPhotoUrl?: string;
+  contactLine?: string;
 };
 
 export type Item = {

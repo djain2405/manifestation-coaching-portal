@@ -8,11 +8,13 @@ import {
   PORTAL_COOKIE,
 } from "@/lib/auth";
 import { cookies } from "next/headers";
+import { WELCOME_COOKIE } from "@/lib/constants";
 
 export type UserProfile = {
   id: string;
   full_name: string | null;
   role: "admin" | "viewer";
+  welcome_seen_at: string | null;
 };
 
 export async function getSessionUser() {
@@ -56,7 +58,7 @@ async function promoteAdminIfConfiguredEmail(
     .from("profiles")
     .update({ role: "admin" })
     .eq("id", user.id)
-    .select("id, full_name, role")
+    .select("id, full_name, role, welcome_seen_at")
     .single();
 
   if (error) {
@@ -71,18 +73,46 @@ export async function getProfile(): Promise<UserProfile | null> {
   const user = await getSessionUser();
   if (!user) return null;
   if (user.id === "legacy") {
-    return { id: "legacy", full_name: "Guest", role: "admin" };
+    const cookieStore = await cookies();
+    const seen = cookieStore.get(WELCOME_COOKIE)?.value;
+    return {
+      id: "legacy",
+      full_name: "Guest",
+      role: "admin",
+      welcome_seen_at: seen ? new Date().toISOString() : null,
+    };
   }
 
   const supabase = await createClient();
-  const { data } = await supabase
+  const { data, error } = await supabase
     .from("profiles")
-    .select("id, full_name, role")
+    .select("id, full_name, role, welcome_seen_at")
     .eq("id", user.id)
     .single();
 
-  const profile = data as UserProfile | null;
-  return promoteAdminIfConfiguredEmail(user, profile);
+  let profile = data as UserProfile | null;
+  if (
+    error &&
+    (error.message.includes("welcome_seen_at") || error.code === "42703")
+  ) {
+    const fallback = await supabase
+      .from("profiles")
+      .select("id, full_name, role")
+      .eq("id", user.id)
+      .single();
+    profile = fallback.data
+      ? { ...fallback.data, welcome_seen_at: null }
+      : null;
+  }
+
+  const promoted = await promoteAdminIfConfiguredEmail(user, profile);
+  if (promoted && !promoted.welcome_seen_at) {
+    const cookieStore = await cookies();
+    if (cookieStore.get(WELCOME_COOKIE)?.value) {
+      promoted.welcome_seen_at = new Date().toISOString();
+    }
+  }
+  return promoted;
 }
 
 export async function requireAuth() {

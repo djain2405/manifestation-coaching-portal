@@ -9,6 +9,7 @@ import { slugify, uniqueSlug } from "@/lib/slug";
 import { parseVideoUrl } from "@/lib/parse-video-url";
 import { createClient } from "@/lib/supabase/server";
 import type { SupabaseClient } from "@supabase/supabase-js";
+import { isSafePhotoUrl } from "@/lib/site";
 
 async function uniqueItemSlug(
   supabase: SupabaseClient,
@@ -162,19 +163,53 @@ export async function updateSiteSettingsAction(formData: FormData) {
   await requireAdmin();
   const supabase = await createClient();
 
-  const title = String(formData.get("title") ?? "");
-  const tagline = String(formData.get("tagline") ?? "");
+  const title = String(formData.get("title") ?? "").trim();
+  const tagline = String(formData.get("tagline") ?? "").trim();
+  const coachName = String(formData.get("coachName") ?? "").trim();
+  const welcomeMessage = String(formData.get("welcomeMessage") ?? "").trim();
+  const rawPhoto = String(formData.get("coachPhotoUrl") ?? "").trim();
+  const coachPhotoUrl = isSafePhotoUrl(rawPhoto) ? rawPhoto : "";
+  const contactLine = String(formData.get("contactLine") ?? "").trim();
 
-  const { error } = await supabase.from("site_settings").upsert({
+  const payload = {
     id: "default",
     title,
     tagline,
+    coach_name: coachName,
+    welcome_message: welcomeMessage,
+    coach_photo_url: coachPhotoUrl,
+    contact_line: contactLine,
     updated_at: new Date().toISOString(),
-  });
+  };
+
+  let { error } = await supabase.from("site_settings").upsert(payload);
+
+  if (
+    error &&
+    (error.message.includes("coach_name") ||
+      error.message.includes("column") ||
+      error.code === "42703")
+  ) {
+    const fallback = await supabase.from("site_settings").upsert({
+      id: "default",
+      title,
+      tagline,
+      updated_at: new Date().toISOString(),
+    });
+    error = fallback.error;
+    if (!error) {
+      throw new Error(
+        "Run the latest database migration to save coach name, welcome message, and photo.",
+      );
+    }
+  }
 
   if (error) throw new Error(error.message);
   revalidatePath("/admin/settings");
   revalidatePath("/");
+  revalidatePath("/login");
+  revalidatePath("/signup");
+  revalidatePath("/welcome");
 }
 
 export async function createCollectionAction(formData: FormData) {

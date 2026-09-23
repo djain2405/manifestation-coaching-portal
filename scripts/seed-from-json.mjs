@@ -67,6 +67,10 @@ async function main() {
     password_hint: site.passwordHint ?? "",
     theme: site.theme ?? "light",
     labels: site.labels ?? {},
+    coach_name: site.coachName ?? "",
+    welcome_message: site.welcomeMessage ?? "",
+    coach_photo_url: site.coachPhotoUrl ?? "",
+    contact_line: site.contactLine ?? "",
     updated_at: new Date().toISOString(),
   });
 

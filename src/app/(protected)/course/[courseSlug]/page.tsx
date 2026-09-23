@@ -2,9 +2,10 @@ import { notFound } from "next/navigation";
 import { getCollection, getCurriculum } from "@/lib/curriculum";
 import { getLabels } from "@/lib/labels";
 import { getCoverClassName } from "@/lib/collection-style";
-import { isAdmin } from "@/lib/session";
+import { isAdmin, getProfile } from "@/lib/session";
 import { PortalShell } from "@/components/PortalShell";
 import { CollectionHome } from "@/components/CollectionHome";
+import { firstName } from "@/lib/site";
 
 type Props = {
   params: Promise<{ courseSlug: string }>;
@@ -27,6 +28,7 @@ export default async function CollectionPage({ params, searchParams }: Props) {
   const labels = getLabels(site);
   const coverClass = getCoverClassName(collection);
   const admin = await isAdmin();
+  const profile = await getProfile();
   const passwordUpdated = (await searchParams).password === "updated";
 
   return (
@@ -40,6 +42,7 @@ export default async function CollectionPage({ params, searchParams }: Props) {
         collection={collection}
         labels={labels}
         coverClass={coverClass}
+        firstName={firstName(profile?.full_name)}
         passwordUpdated={passwordUpdated}
       />
     </PortalShell>

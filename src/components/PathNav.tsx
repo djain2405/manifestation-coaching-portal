@@ -4,7 +4,8 @@ import Link from "next/link";
 import type { Collection } from "@/lib/types";
 import type { SiteLabels } from "@/lib/types";
 import { useProgress } from "@/hooks/useProgress";
-import { isActivityItem } from "@/lib/items";
+import { isActivityItem, getItemType } from "@/lib/items";
+import { LessonTypeIcon } from "./LessonTypeIcon";
 
 type Props = {
   collection: Collection;
@@ -50,7 +51,14 @@ export function PathNav({ collection, labels, activeItemSlug }: Props) {
                 }`}
                 aria-hidden
               >
-                {done ? "✓" : item.emoji ?? (isActivity ? "📝" : "·")}
+                {done ? (
+                  "✓"
+                ) : (
+                  <LessonTypeIcon
+                    type={getItemType(item)}
+                    className="h-3 w-3"
+                  />
+                )}
               </span>
               <Link
                 href={`/course/${collection.slug}/${item.slug}`}

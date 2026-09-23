@@ -4,6 +4,7 @@ import Link from "next/link";
 import type { Collection } from "@/lib/types";
 import type { SiteLabels } from "@/lib/types";
 import { ProgressBar } from "./ProgressBar";
+import { HeroOrnament } from "./Ornaments";
 
 type Props = {
   collection: Collection;
@@ -14,8 +15,9 @@ type Props = {
   percent: number;
   completedCount: number;
   hydrated: boolean;
-  welcomeLine?: string | null;
+  greeting?: string | null;
   progressSummary: string;
+  isFirstRun: boolean;
 };
 
 export function CollectionHero({
@@ -27,8 +29,9 @@ export function CollectionHero({
   percent,
   completedCount,
   hydrated,
-  welcomeLine,
+  greeting,
   progressSummary,
+  isFirstRun,
 }: Props) {
   const total = collection.items.length;
 
@@ -36,13 +39,14 @@ export function CollectionHero({
     <section
       className={`relative overflow-hidden rounded-3xl border border-accent/20 bg-gradient-to-br ${coverClass} p-8 sm:p-10`}
     >
+      <HeroOrnament />
       <div className="relative z-10 max-w-2xl space-y-6">
-        {welcomeLine ? (
-          <p className="text-base font-medium text-white/90">{welcomeLine}</p>
+        {greeting ? (
+          <p className="text-base font-medium text-white/90">{greeting}</p>
         ) : null}
         <div className="space-y-3">
           <p className="text-xs font-medium uppercase tracking-[0.1em] text-white/70">
-            {labels.collection}
+            {hydrated && isFirstRun ? labels.startHere : labels.collection}
           </p>
           <h1 className="font-display text-4xl leading-[1.08] text-white sm:text-5xl">
             {collection.title}
@@ -51,16 +55,18 @@ export function CollectionHero({
         </div>
 
         {hydrated ? (
-          <div className="space-y-3">
-            <p className="text-lg font-medium text-white">{progressSummary}</p>
-            <ProgressBar
-              percent={percent}
-              completedCount={completedCount}
-              total={total}
-              progressLabel={labels.progress ?? "finished"}
-              onDark
-            />
-          </div>
+          isFirstRun ? null : (
+            <div className="space-y-3">
+              <p className="text-lg font-medium text-white">{progressSummary}</p>
+              <ProgressBar
+                percent={percent}
+                completedCount={completedCount}
+                total={total}
+                progressLabel={labels.progress ?? "finished"}
+                onDark
+              />
+            </div>
+          )
         ) : (
           <div className="h-10 animate-pulse rounded-lg bg-white/10" aria-hidden />
         )}

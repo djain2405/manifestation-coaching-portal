@@ -3,7 +3,8 @@
 import Link from "next/link";
 import type { Item } from "@/lib/types";
 import type { SiteLabels } from "@/lib/types";
-import { getItemDuration, isActivityItem } from "@/lib/items";
+import { getItemDuration, getItemType, isActivityItem } from "@/lib/items";
+import { LessonTypeIcon } from "./LessonTypeIcon";
 
 type Props = {
   collectionSlug: string;
@@ -41,8 +42,21 @@ export function LessonList({
                   : "border-border hover:border-accent/30"
               }`}
             >
-              <span className="text-2xl" aria-hidden>
-                {item.emoji ?? (isActivity ? "📝" : "▶")}
+              <span
+                className={`flex h-10 w-10 shrink-0 items-center justify-center ${
+                  isActivity ? "rounded-lg" : "rounded-full"
+                } ${
+                  done
+                    ? "bg-accent text-accent-foreground"
+                    : "bg-accent/10 text-accent"
+                }`}
+                aria-hidden
+              >
+                {done ? (
+                  <span className="text-sm font-semibold">✓</span>
+                ) : (
+                  <LessonTypeIcon type={getItemType(item)} className="h-5 w-5" />
+                )}
               </span>
               <div className="min-w-0 flex-1">
                 {item.subtitle ? (

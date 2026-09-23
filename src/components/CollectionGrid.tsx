@@ -1,31 +1,47 @@
 import type { CSSProperties } from "react";
 import Link from "next/link";
-import type { Collection, Site } from "@/lib/types";
+import type { Collection, Site, SiteLabels } from "@/lib/types";
 import { getCoverClassName } from "@/lib/collection-style";
+import { formatLabel } from "@/lib/labels";
 import { SignOutButton } from "./SignOutButton";
 import { ChangePasswordLink } from "./ChangePasswordLink";
+import { BrandGlyph } from "./BrandMark";
 
 type Props = {
   site: Site;
   collections: Collection[];
+  labels: SiteLabels;
   showAdminLink?: boolean;
+  firstName?: string;
   passwordUpdated?: boolean;
 };
 
 export function CollectionGrid({
   site,
   collections,
+  labels,
   showAdminLink,
+  firstName,
   passwordUpdated,
 }: Props) {
+  const greeting = firstName
+    ? formatLabel(labels.welcomeBackName ?? "Welcome back, {name}.", {
+        name: firstName,
+      })
+    : (labels.welcomeBack ?? "Welcome back");
+
   return (
     <div className="mx-auto flex w-full max-w-5xl flex-1 flex-col gap-10 px-4 py-12 sm:px-6 sm:py-16">
       <header className="space-y-3 text-center sm:text-left">
         <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
           <div className="space-y-3">
-            <h1 className="font-display text-4xl text-foreground sm:text-5xl">
-              {site.title}
-            </h1>
+            <div className="flex items-center justify-center gap-3 text-accent sm:justify-start">
+              <BrandGlyph className="h-10 w-10" />
+              <h1 className="font-display text-4xl text-foreground sm:text-5xl">
+                {site.title}
+              </h1>
+            </div>
+            <p className="text-base font-medium text-accent">{greeting}</p>
             {passwordUpdated ? (
               <p className="text-base text-accent" role="status">
                 Your password was updated.
@@ -64,15 +80,15 @@ export function CollectionGrid({
                 }
               >
                 <div
-                  className={`bg-gradient-to-br ${cover} p-8 transition-opacity group-hover:opacity-95`}
+                  className={`relative overflow-hidden bg-gradient-to-br ${cover} p-8 transition-opacity group-hover:opacity-95`}
                 >
-                  <span className="text-3xl" aria-hidden>
-                    {collection.items[0]?.emoji ?? "✦"}
-                  </span>
+                  <BrandGlyph className="h-10 w-10 text-white/80" />
                 </div>
                 <div className="space-y-2 p-6">
                   <p className="text-xs font-semibold uppercase tracking-wider text-accent">
-                    {collection.items.length} pieces
+                    {formatLabel(labels.lessonsCount ?? "{count} lessons", {
+                      count: collection.items.length,
+                    })}
                   </p>
                   <h2 className="font-display text-2xl text-foreground group-hover:text-accent">
                     {collection.title}

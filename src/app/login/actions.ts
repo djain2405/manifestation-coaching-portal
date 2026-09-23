@@ -12,7 +12,6 @@ import {
   PORTAL_COOKIE_VALUE,
 } from "@/lib/auth";
 import { cookies } from "next/headers";
-import { DEFAULT_COURSE_PATH } from "@/lib/constants";
 import { getSiteUrl } from "@/lib/site-url";
 import { getSessionUser } from "@/lib/session";
 
@@ -20,7 +19,7 @@ function safeRedirectPath(from: FormDataEntryValue | null): string {
   if (typeof from === "string" && from.startsWith("/") && !from.startsWith("//")) {
     return from;
   }
-  return DEFAULT_COURSE_PATH;
+  return "/";
 }
 
 export async function loginAction(formData: FormData) {

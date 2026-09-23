@@ -3,6 +3,7 @@ import { checkAuthenticated } from "@/lib/session";
 import { getCurriculum } from "@/lib/curriculum";
 import { updatePasswordAction } from "@/app/login/actions";
 import { isSupabaseConfigured } from "@/lib/supabase/config";
+import { AuthShell } from "@/components/AuthShell";
 
 export const dynamic = "force-dynamic";
 
@@ -29,73 +30,65 @@ export default async function ResetPasswordPage({ searchParams }: Props) {
         : null;
 
   return (
-    <div className="flex min-h-full flex-1 flex-col items-center justify-center px-4 py-16">
-      <div className="w-full max-w-md space-y-8 text-center">
-        <div className="space-y-4">
-          <p className="text-sm font-medium uppercase tracking-[0.12em] text-accent">
-            {site.title}
-          </p>
-          <h1 className="font-display text-4xl text-foreground">
-            Choose a new password
-          </h1>
-          <p className="text-lg text-muted">
-            Enter a new password for your portal account.
-          </p>
+    <AuthShell
+      site={site}
+      eyebrow={site.title}
+      title="Choose a new password"
+      description="Enter a new password for your account."
+      showPrivacyNote={false}
+    >
+      <form
+        action={updatePasswordAction}
+        className="space-y-5 rounded-2xl border border-border bg-white p-8 text-left shadow-sm"
+      >
+        <div className="space-y-2">
+          <label
+            htmlFor="password"
+            className="text-base font-medium text-foreground"
+          >
+            New password
+          </label>
+          <input
+            id="password"
+            name="password"
+            type="password"
+            autoComplete="new-password"
+            required
+            minLength={8}
+            className="w-full min-h-12 rounded-xl border border-border bg-background px-4 py-3.5 text-base focus:border-accent focus:outline-none focus:ring-2 focus:ring-accent/30"
+          />
+        </div>
+        <div className="space-y-2">
+          <label
+            htmlFor="confirmPassword"
+            className="text-base font-medium text-foreground"
+          >
+            Confirm password
+          </label>
+          <input
+            id="confirmPassword"
+            name="confirmPassword"
+            type="password"
+            autoComplete="new-password"
+            required
+            minLength={8}
+            className="w-full min-h-12 rounded-xl border border-border bg-background px-4 py-3.5 text-base focus:border-accent focus:outline-none focus:ring-2 focus:ring-accent/30"
+          />
         </div>
 
-        <form
-          action={updatePasswordAction}
-          className="space-y-5 rounded-2xl border border-border bg-white p-8 text-left shadow-sm"
+        {errorMessage ? (
+          <p className="text-center text-base text-red-500" role="alert">
+            {errorMessage}
+          </p>
+        ) : null}
+
+        <button
+          type="submit"
+          className="w-full min-h-12 rounded-lg bg-accent py-3.5 text-base font-semibold text-accent-foreground shadow-sm hover:opacity-90"
         >
-          <div className="space-y-2">
-            <label
-              htmlFor="password"
-              className="text-base font-medium text-foreground"
-            >
-              New password
-            </label>
-            <input
-              id="password"
-              name="password"
-              type="password"
-              autoComplete="new-password"
-              required
-              minLength={8}
-              className="w-full min-h-12 rounded-xl border border-border bg-background px-4 py-3.5 text-base focus:border-accent focus:outline-none focus:ring-2 focus:ring-accent/30"
-            />
-          </div>
-          <div className="space-y-2">
-            <label
-              htmlFor="confirmPassword"
-              className="text-base font-medium text-foreground"
-            >
-              Confirm password
-            </label>
-            <input
-              id="confirmPassword"
-              name="confirmPassword"
-              type="password"
-              autoComplete="new-password"
-              required
-              minLength={8}
-              className="w-full min-h-12 rounded-xl border border-border bg-background px-4 py-3.5 text-base focus:border-accent focus:outline-none focus:ring-2 focus:ring-accent/30"
-            />
-          </div>
-
-          {errorMessage ? (
-            <p className="text-center text-base text-red-500" role="alert">
-              {errorMessage}
-            </p>
-          ) : null}
-
-          <button
-            type="submit"
-            className="w-full min-h-12 rounded-lg bg-accent py-3.5 text-base font-semibold text-accent-foreground shadow-sm hover:opacity-90"
-          >
-            Save password
-          </button>
-        </form>
-      </div>
-    </div>
+          Save password
+        </button>
+      </form>
+    </AuthShell>
   );
 }

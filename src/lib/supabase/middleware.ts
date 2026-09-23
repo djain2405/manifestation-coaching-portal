@@ -58,6 +58,7 @@ export async function updateSession(request: NextRequest) {
     path === "/" ||
     path.startsWith("/course") ||
     path.startsWith("/admin") ||
+    path.startsWith("/welcome") ||
     path.startsWith("/account");
 
   if (!user && (isProtected || isResetPassword) && !isAuthPage && !isAuthCallback) {

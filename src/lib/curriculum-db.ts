@@ -181,6 +181,7 @@ export async function getCurriculumAsync(): Promise<Curriculum> {
     .eq("id", "default")
     .maybeSingle();
 
+  const jsonSite = getJsonCurriculum().site;
   const site: Site = settings
     ? {
         title: settings.title,
@@ -188,8 +189,12 @@ export async function getCurriculumAsync(): Promise<Curriculum> {
         passwordHint: settings.password_hint,
         theme: settings.theme ?? undefined,
         labels: settings.labels ?? undefined,
+        coachName: settings.coach_name ?? jsonSite.coachName ?? "",
+        welcomeMessage: settings.welcome_message ?? jsonSite.welcomeMessage ?? "",
+        coachPhotoUrl: settings.coach_photo_url ?? jsonSite.coachPhotoUrl ?? "",
+        contactLine: settings.contact_line ?? jsonSite.contactLine ?? "",
       }
-    : getJsonCurriculum().site;
+    : jsonSite;
 
   const { data: collections, error } = await supabase
     .from("collections")

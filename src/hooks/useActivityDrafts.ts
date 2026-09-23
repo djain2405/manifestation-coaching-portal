@@ -7,17 +7,21 @@ import {
   saveActivityResponse,
 } from "@/app/actions/progress";
 import { isSupabaseConfigured } from "@/lib/supabase/config";
-
-const STORAGE_PREFIX = "night-school:drafts:";
-
-function storageKey(collectionSlug: string, itemSlug: string) {
-  return `${STORAGE_PREFIX}${collectionSlug}:${itemSlug}`;
-}
+import {
+  draftStorageKey,
+  legacyDraftStorageKey,
+  readMigratedStorage,
+  writeStorage,
+  removeStorage,
+} from "@/lib/local-storage";
 
 function readLocal(collectionSlug: string, itemSlug: string): ActivityDraft {
   if (typeof window === "undefined") return {};
   try {
-    const raw = localStorage.getItem(storageKey(collectionSlug, itemSlug));
+    const raw = readMigratedStorage(
+      draftStorageKey(collectionSlug, itemSlug),
+      legacyDraftStorageKey(collectionSlug, itemSlug),
+    );
     if (!raw) return {};
     return JSON.parse(raw) as ActivityDraft;
   } catch {
@@ -30,10 +34,7 @@ function writeLocal(
   itemSlug: string,
   draft: ActivityDraft,
 ) {
-  localStorage.setItem(
-    storageKey(collectionSlug, itemSlug),
-    JSON.stringify(draft),
-  );
+  writeStorage(draftStorageKey(collectionSlug, itemSlug), JSON.stringify(draft));
 }
 
 export function useActivityDrafts(
@@ -60,7 +61,8 @@ export function useActivityDrafts(
           for (const [key, val] of Object.entries(local)) {
             await saveActivityResponse(itemId, key, val);
           }
-          localStorage.removeItem(storageKey(collectionSlug, itemSlug));
+          removeStorage(draftStorageKey(collectionSlug, itemSlug));
+          removeStorage(legacyDraftStorageKey(collectionSlug, itemSlug));
           const merged = await getActivityResponses(itemId);
           if (!cancelled) setDraft(merged);
         } else if (!cancelled) {

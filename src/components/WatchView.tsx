@@ -5,9 +5,10 @@ import { useEffect, useState } from "react";
 import type { Collection, Item } from "@/lib/types";
 import type { SiteLabels } from "@/lib/types";
 import { useProgress } from "@/hooks/useProgress";
-import { isWatchItem } from "@/lib/items";
+import { isWatchItem, getItemType } from "@/lib/items";
 import { EmbedPlayer } from "./EmbedPlayer";
 import { CompleteBurst } from "./CompleteBurst";
+import { LessonTypeIcon } from "./LessonTypeIcon";
 
 type Props = {
   collection: Collection;
@@ -50,11 +51,9 @@ export function WatchView({ collection, item, index, labels }: Props) {
       <article className="space-y-8">
         <header className="space-y-3">
           <div className="flex flex-wrap items-center gap-2">
-            {item.emoji ? (
-              <span className="text-2xl" aria-hidden>
-                {item.emoji}
-              </span>
-            ) : null}
+            <span className="text-accent" aria-hidden>
+              <LessonTypeIcon type={getItemType(item)} className="h-6 w-6" />
+            </span>
             {item.subtitle ? (
               <p className="text-sm font-medium uppercase tracking-[0.1em] text-accent">
                 {item.subtitle}
@@ -122,7 +121,7 @@ export function WatchView({ collection, item, index, labels }: Props) {
         </div>
       </article>
 
-      <CompleteBurst show={burst} />
+      <CompleteBurst show={burst} message={labels.markedComplete} />
     </>
   );
 }

@@ -2,8 +2,12 @@
   "site": {
     "title": "Manifest Portal",
     "tagline": "Move through each phase at your pace. Watch, reflect, and integrate.",
-    "passwordHint": "Ask the host for the portal key.",
+    "passwordHint": "Ask your coach for the portal key.",
     "theme": "light",
+    "coachName": "",
+    "welcomeMessage": "I'm glad you're here. This is a private space I made for the people I work with. Go at your own pace — watch, reflect, and mark each step complete when it feels done.",
+    "coachPhotoUrl": "",
+    "contactLine": "",
     "labels": {
       "collection": "Module",
       "item": "Lesson",
@@ -27,7 +31,14 @@
       "savedLocally": "Saved",
       "done": "Done",
       "stepOf": "Step {current} of {total}",
-      "lessonsFinished": "You've finished {done} of {total} lessons"
+      "lessonsFinished": "You've finished {done} of {total} lessons",
+      "startHere": "Start here",
+      "beginWith": "Begin with {title}",
+      "welcomeName": "Welcome, {name}.",
+      "welcomeBackName": "Welcome back, {name}.",
+      "markedComplete": "Marked complete",
+      "worksheetComplete": "Worksheet saved to your path",
+      "lessonsCount": "{count} lessons"
     }
   },
   "collections": [

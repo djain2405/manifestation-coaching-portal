@@ -22,7 +22,8 @@ import type { Item } from "@/lib/types";
 import { reorderItemsAction, deleteItemAction } from "@/app/admin/actions";
 import { WorksheetUpload } from "./WorksheetUpload";
 import { EditItemForm } from "./EditItemForm";
-import { isActivityItem } from "@/lib/items";
+import { isActivityItem, getItemType } from "@/lib/items";
+import { LessonTypeIcon } from "@/components/LessonTypeIcon";
 
 type Props = {
   collectionId: string;
@@ -61,8 +62,8 @@ function SortableRow({
         >
           ⋮⋮
         </button>
-        <span className="text-xl" aria-hidden>
-          {item.emoji ?? (item.type === "activity" ? "📝" : "▶")}
+        <span className="text-accent" aria-hidden>
+          <LessonTypeIcon type={getItemType(item)} className="h-5 w-5" />
         </span>
         <div className="min-w-0 flex-1">
           <p className="font-medium text-foreground">{item.title}</p>

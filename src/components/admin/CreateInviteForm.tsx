@@ -4,8 +4,13 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { createInviteAction } from "@/app/admin/actions";
 import { CopyInviteLink } from "./CopyInviteLink";
+import type { Site } from "@/lib/types";
 
-export function CreateInviteForm() {
+type Props = {
+  site: Pick<Site, "coachName">;
+};
+
+export function CreateInviteForm({ site }: Props) {
   const router = useRouter();
   const [token, setToken] = useState<string | null>(null);
   const [pending, setPending] = useState(false);
@@ -75,7 +80,7 @@ export function CreateInviteForm() {
           <p className="mb-2 text-sm text-muted">
             New invite created — copy and send only to that client:
           </p>
-          <CopyInviteLink token={token} />
+          <CopyInviteLink token={token} site={site} />
         </div>
       ) : null}
     </div>

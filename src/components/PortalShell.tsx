@@ -7,6 +7,7 @@ import { PathNav } from "./PathNav";
 import { MobilePathDrawer } from "./MobilePathDrawer";
 import { SignOutButton } from "./SignOutButton";
 import { ChangePasswordLink } from "./ChangePasswordLink";
+import { BrandMark } from "./BrandMark";
 
 type Props = {
   site: Site;
@@ -35,9 +36,14 @@ export function PortalShell({
             <Link
               href="/"
               prefetch={false}
-              className="font-display text-xl text-foreground"
+              className="min-w-0 text-accent"
             >
-              {site.title}
+              <BrandMark
+                title={site.title}
+                className="inline-flex min-w-0 max-w-[10rem] items-center gap-2 text-accent sm:max-w-none sm:gap-3"
+                glyphClassName="h-8 w-8 shrink-0"
+                titleClassName="truncate font-display text-lg text-foreground sm:text-xl"
+              />
             </Link>
             <div className="flex min-w-0 flex-wrap items-center justify-end gap-2 sm:gap-3">
               {showAdminLink ? (
@@ -52,9 +58,11 @@ export function PortalShell({
               <Link
                 href={`/course/${collection.slug}`}
                 prefetch={false}
-                className="rounded-full border border-border/80 bg-surface/80 px-4 py-1.5 text-sm font-medium text-foreground transition-colors hover:border-accent hover:text-accent"
+                className="max-w-[9rem] truncate rounded-full border border-border/80 bg-surface/80 px-4 py-1.5 text-sm font-medium text-foreground transition-colors hover:border-accent hover:text-accent sm:max-w-[16rem] md:max-w-xs"
+                title={collection.title}
               >
-                {collection.title}
+                <span className="sm:hidden">{labels.path}</span>
+                <span className="hidden sm:inline">{collection.title}</span>
               </Link>
               <ChangePasswordLink />
               <SignOutButton />

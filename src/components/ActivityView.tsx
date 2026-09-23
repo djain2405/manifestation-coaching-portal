@@ -7,6 +7,7 @@ import type { SiteLabels } from "@/lib/types";
 import { useProgress } from "@/hooks/useProgress";
 import { ActivityForm } from "./ActivityForm";
 import { CompleteBurst } from "./CompleteBurst";
+import { LessonTypeIcon } from "./LessonTypeIcon";
 
 type Props = {
   collection: Collection;
@@ -55,11 +56,9 @@ export function ActivityView({ collection, item, index, labels }: Props) {
       <article className="space-y-8">
         <header className="space-y-3">
           <div className="flex flex-wrap items-center gap-2">
-            {item.emoji ? (
-              <span className="text-2xl" aria-hidden>
-                {item.emoji}
-              </span>
-            ) : null}
+            <span className="text-accent" aria-hidden>
+              <LessonTypeIcon type="activity" className="h-5 w-5" />
+            </span>
             <span className="rounded-full bg-accent/15 px-3 py-1 text-xs font-medium uppercase tracking-wide text-accent">
               {labels.activity}
             </span>
@@ -152,7 +151,7 @@ export function ActivityView({ collection, item, index, labels }: Props) {
         </div>
       </article>
 
-      <CompleteBurst show={burst} message="Nice — worksheet complete" />
+      <CompleteBurst show={burst} message={labels.worksheetComplete} />
     </>
   );
 }

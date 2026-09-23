@@ -8,19 +8,23 @@ import {
   setItemOpened,
 } from "@/app/actions/progress";
 import { isSupabaseConfigured } from "@/lib/supabase/config";
-
-const STORAGE_PREFIX = "night-school:progress:";
-
-function storageKey(courseSlug: string) {
-  return `${STORAGE_PREFIX}${courseSlug}`;
-}
+import {
+  progressStorageKey,
+  legacyProgressStorageKey,
+  readMigratedStorage,
+  writeStorage,
+  removeStorage,
+} from "@/lib/local-storage";
 
 function readLocal(courseSlug: string): CourseProgress {
   if (typeof window === "undefined") {
     return { completed: [], lastLesson: null };
   }
   try {
-    const raw = localStorage.getItem(storageKey(courseSlug));
+    const raw = readMigratedStorage(
+      progressStorageKey(courseSlug),
+      legacyProgressStorageKey(courseSlug),
+    );
     if (!raw) return { completed: [], lastLesson: null };
     const parsed = JSON.parse(raw) as CourseProgress;
     return {
@@ -34,7 +38,7 @@ function readLocal(courseSlug: string): CourseProgress {
 }
 
 function writeLocal(courseSlug: string, progress: CourseProgress) {
-  localStorage.setItem(storageKey(courseSlug), JSON.stringify(progress));
+  writeStorage(progressStorageKey(courseSlug), JSON.stringify(progress));
 }
 
 type ItemRef = { id?: string; slug: string; title?: string };
@@ -74,7 +78,8 @@ export function useProgress(collectionSlug: string, items: ItemRef[]) {
             const id = slugToIdRef.current.get(local.lastLesson);
             if (id) await setItemOpened(id);
           }
-          localStorage.removeItem(storageKey(collectionSlug));
+          removeStorage(progressStorageKey(collectionSlug));
+          removeStorage(legacyProgressStorageKey(collectionSlug));
           const merged = await fetchProgressForCollection(items);
           if (!cancelled) {
             setProgress({
