@@ -2,7 +2,7 @@ import Link from "next/link";
 import type { Collection } from "@/lib/types";
 import type { Site } from "@/lib/types";
 import type { SiteLabels } from "@/lib/types";
-import { getCollectionStyle } from "@/lib/collection-style";
+import { getCollectionStyle, isLightAccent } from "@/lib/collection-style";
 import { PathNav } from "./PathNav";
 import { MobilePathDrawer } from "./MobilePathDrawer";
 import { SignOutButton } from "./SignOutButton";
@@ -27,6 +27,9 @@ export function PortalShell({
   children,
 }: Props) {
   const style = getCollectionStyle(collection);
+  const markClassName = isLightAccent(collection.accent)
+    ? "inline-flex min-w-0 max-w-[10rem] items-center gap-2 text-foreground sm:max-w-none sm:gap-3"
+    : "inline-flex min-w-0 max-w-[10rem] items-center gap-2 text-accent sm:max-w-none sm:gap-3";
 
   return (
     <div style={style} className="flex min-h-full flex-1 flex-col">
@@ -36,11 +39,11 @@ export function PortalShell({
             <Link
               href="/"
               prefetch={false}
-              className="min-w-0 text-accent"
+              className={isLightAccent(collection.accent) ? "min-w-0 text-foreground" : "min-w-0 text-accent"}
             >
               <BrandMark
                 title={site.title}
-                className="inline-flex min-w-0 max-w-[10rem] items-center gap-2 text-accent sm:max-w-none sm:gap-3"
+                className={markClassName}
                 glyphClassName="h-8 w-8 shrink-0"
                 titleClassName="truncate font-display text-lg text-foreground sm:text-xl"
               />

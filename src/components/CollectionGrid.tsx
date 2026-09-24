@@ -1,7 +1,7 @@
 import type { CSSProperties } from "react";
 import Link from "next/link";
 import type { Collection, Site, SiteLabels } from "@/lib/types";
-import { getCoverClassName } from "@/lib/collection-style";
+import { getCoverClassName, isLightCover } from "@/lib/collection-style";
 import { formatLabel } from "@/lib/labels";
 import { SignOutButton } from "./SignOutButton";
 import { ChangePasswordLink } from "./ChangePasswordLink";
@@ -68,6 +68,7 @@ export function CollectionGrid({
       <ul className="grid gap-6 sm:grid-cols-2">
         {collections.map((collection) => {
           const cover = getCoverClassName(collection);
+          const lightCover = isLightCover(cover);
           const accent = collection.accent ?? "#163832";
           return (
             <li key={collection.slug}>
@@ -82,7 +83,9 @@ export function CollectionGrid({
                 <div
                   className={`relative overflow-hidden bg-gradient-to-br ${cover} p-8 transition-opacity group-hover:opacity-95`}
                 >
-                  <BrandGlyph className="h-10 w-10 text-white/80" />
+                  <BrandGlyph
+                    className={`h-10 w-10 ${lightCover ? "text-foreground/80" : "text-white/80"}`}
+                  />
                 </div>
                 <div className="space-y-2 p-6">
                   <p className="text-xs font-semibold uppercase tracking-wider text-accent">

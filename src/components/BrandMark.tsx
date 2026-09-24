@@ -18,12 +18,13 @@ export function BrandGlyph({ className = "h-10 w-10" }: GlyphProps) {
         strokeWidth="1.15"
       />
       <path
-        d="M10 29q14-7 28 0"
+        d="M10 22q14 7 28 0"
         stroke="currentColor"
         strokeWidth="1.2"
         strokeLinecap="round"
       />
-      <circle cx="24" cy="15.5" r="1.7" fill="currentColor" />
+      <circle cx="18" cy="16" r="1.7" fill="currentColor" />
+      <circle cx="30" cy="16" r="1.7" fill="currentColor" />
     </svg>
   );
 }
