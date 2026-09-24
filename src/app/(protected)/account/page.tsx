@@ -4,11 +4,15 @@ import { getCurriculum } from "@/lib/curriculum";
 import { changePasswordAction } from "@/app/login/actions";
 import { isSupabaseConfigured } from "@/lib/supabase/config";
 import { AuthShell } from "@/components/AuthShell";
+import {
+  decodePasswordChangeReason,
+  passwordChangeErrorCopy,
+} from "@/lib/password-errors";
 
 export const dynamic = "force-dynamic";
 
 type Props = {
-  searchParams: Promise<{ error?: string }>;
+  searchParams: Promise<{ error?: string; reason?: string }>;
 };
 
 export default async function AccountPage({ searchParams }: Props) {
@@ -18,13 +22,9 @@ export default async function AccountPage({ searchParams }: Props) {
 
   const { site } = await getCurriculum();
   const admin = await isAdmin();
-  const { error } = await searchParams;
-  const errorMessage =
-    error === "invalid"
-      ? "Passwords must match and be at least 8 characters."
-      : error === "update"
-        ? "We couldn’t update your password. Please try again."
-        : null;
+  const { error, reason } = await searchParams;
+  const errorMessage = error ? passwordChangeErrorCopy(error) : null;
+  const errorDetail = decodePasswordChangeReason(reason);
 
   return (
     <AuthShell
@@ -89,9 +89,12 @@ export default async function AccountPage({ searchParams }: Props) {
         </div>
 
         {errorMessage ? (
-          <p className="text-center text-base text-red-500" role="alert">
-            {errorMessage}
-          </p>
+          <div className="space-y-1 text-center" role="alert">
+            <p className="text-base text-red-500">{errorMessage}</p>
+            {errorDetail && errorDetail !== errorMessage ? (
+              <p className="text-sm text-red-500/80">{errorDetail}</p>
+            ) : null}
+          </div>
         ) : null}
 
         <button

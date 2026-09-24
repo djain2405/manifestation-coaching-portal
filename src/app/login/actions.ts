@@ -13,7 +13,10 @@ import {
 } from "@/lib/auth";
 import { cookies } from "next/headers";
 import { getSiteUrl } from "@/lib/site-url";
-import { getSessionUser } from "@/lib/session";
+import {
+  classifyPasswordChangeError,
+  isSessionAuthError,
+} from "@/lib/password-errors";
 
 function safeRedirectPath(from: FormDataEntryValue | null): string {
   if (typeof from === "string" && from.startsWith("/") && !from.startsWith("//")) {
@@ -200,6 +203,22 @@ export async function updatePasswordAction(formData: FormData) {
   redirect("/");
 }
 
+function failPasswordChange(error: {
+  message: string;
+  code?: string;
+  status?: number;
+}): never {
+  console.error(
+    "Password change failed:",
+    error.code ?? "",
+    error.status ?? "",
+    error.message,
+  );
+  const kind = classifyPasswordChangeError(error.message, error.code);
+  const reason = encodeURIComponent(error.message.slice(0, 180));
+  redirect(`/account?error=${kind}&reason=${reason}`);
+}
+
 export async function changePasswordAction(formData: FormData) {
   if (!isSupabaseConfigured()) {
     redirect("/");
@@ -208,21 +227,55 @@ export async function changePasswordAction(formData: FormData) {
   const password = String(formData.get("password") ?? "");
   const confirm = String(formData.get("confirmPassword") ?? "");
 
-  const user = await getSessionUser();
-  if (!user || user.id === "legacy") {
-    redirect("/login");
-  }
-
   if (!password || password.length < 8 || password !== confirm) {
     redirect("/account?error=invalid");
   }
 
   const supabase = await createClient();
-  const { error } = await supabase.auth.updateUser({ password });
-  if (error) {
-    console.error("Password change failed:", error.message);
-    redirect("/account?error=update");
+  const {
+    data: { user },
+    error: userError,
+  } = await supabase.auth.getUser();
+
+  if (userError) {
+    failPasswordChange(userError);
+  }
+  if (!user) {
+    redirect("/login");
   }
 
-  redirect("/?password=updated");
+  const bannedUntil = user.banned_until;
+  if (bannedUntil) {
+    const until = new Date(bannedUntil).getTime();
+    if (Number.isFinite(until) && until > Date.now()) {
+      redirect("/login?error=suspended");
+    }
+  }
+
+  const { error } = await supabase.auth.updateUser({ password });
+  if (!error) {
+    redirect("/?password=updated");
+  }
+
+  if (isSessionAuthError(error.message, error.code, error.status)) {
+    try {
+      const admin = createAdminClient();
+      const { error: adminError } = await admin.auth.admin.updateUserById(
+        user.id,
+        { password },
+      );
+      if (!adminError) {
+        redirect("/?password=updated");
+      }
+      failPasswordChange(adminError);
+    } catch (err) {
+      failPasswordChange({
+        message: err instanceof Error ? err.message : error.message,
+        code: error.code,
+        status: error.status,
+      });
+    }
+  }
+
+  failPasswordChange(error);
 }
